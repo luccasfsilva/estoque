@@ -37,91 +37,14 @@ function showAddForm() {
 function adicionarItem(codigo, nome, quantidade, saida, quantidadeAposSaida, data, setor) {
     inventory.push({ codigo, nome, quantidade, saida, quantidadeAposSaida, data, setor });
     saveToLocalStorage();
-    viewInventory(); // 🔥 Atualiza a tabela automaticamente
-}
-
-function showUpdateForm() {
-    const formContainer = document.getElementById('form-container');
-    formContainer.innerHTML = `
-        <h2>Atualizar Item</h2>
-        <form id="updateForm">
-            <input type="text" id="codigo" placeholder="Código do Produto" required>
-            <input type="number" id="quantidade" placeholder="Nova Quantidade" required>
-            <input type="number" id="saida" placeholder="Nova Quantidade de Saída" required>
-            <input type="date" id="data" required>
-            <input type="text" id="setor" placeholder="Setor" required>
-            <button type="submit">Atualizar</button>
-        </form>
-    `;
-
-    document.getElementById('updateForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        let codigo = document.getElementById('codigo').value;
-        let quantidade = parseInt(document.getElementById('quantidade').value);
-        let saida = parseInt(document.getElementById('saida').value);
-        let data = document.getElementById('data').value;
-        let setor = document.getElementById('setor').value;
-        atualizarItem(codigo, quantidade, saida, data, setor);
-        formContainer.innerHTML = '';
-    });
-}
-
-function atualizarItem(codigo, quantidade, saida, data, setor) {
-    let itemAtualizado = false;
-    for (let i = 0; i < inventory.length; i++) {
-        if (inventory[i].codigo === codigo) {
-            inventory[i].quantidade = quantidade;
-            inventory[i].saida = saida;
-            inventory[i].quantidadeAposSaida = quantidade - saida;
-            inventory[i].data = data;
-            inventory[i].setor = setor;
-            itemAtualizado = true;
-            break;
-        }
-    }
-    if (itemAtualizado) {
-        saveToLocalStorage();
-        viewInventory(); // 🔥 Atualiza a tabela automaticamente
-    } else {
-        alert('Item não encontrado!');
-    }
-}
-
-function showRemoveForm() {
-    const formContainer = document.getElementById('form-container');
-    formContainer.innerHTML = `
-        <h2>Remover Item</h2>
-        <form id="removeForm">
-            <input type="text" id="codigoRemover" placeholder="Código do Produto" required>
-            <button type="submit">Remover</button>
-        </form>
-    `;
-
-    document.getElementById('removeForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        let codigo = document.getElementById('codigoRemover').value;
-        removerItem(codigo);
-        formContainer.innerHTML = '';
-    });
-}
-
-function removerItem(codigo) {
-    let novoInventory = inventory.filter(item => item.codigo !== codigo);
-
-    if (novoInventory.length !== inventory.length) {
-        inventory = novoInventory;
-        saveToLocalStorage();
-        viewInventory(); // 🔥 Atualiza a tabela automaticamente
-    } else {
-        alert('Código não encontrado!');
-    }
+    viewInventory();
 }
 
 function viewInventory() {
     const inventoryContainer = document.getElementById('inventory-container');
     inventoryContainer.innerHTML = `
         <h2>Itens no Estoque</h2>
-        <table>
+        <table id="inventory-table">
             <tr>
                 <th>Código</th>
                 <th>Nome</th>
@@ -143,10 +66,34 @@ function viewInventory() {
                 </tr>
             `).join('')}
         </table>
+        <button onclick="generatePDF()">Gerar PDF</button>
     `;
 }
 
-// Inicializa a visualização ao carregar a página
+function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
+
+    doc.text("Relatório de Estoque", 10, 10);
+    let y = 20;
+    
+    const table = document.querySelector("#inventory-table");
+    if (table) {
+        let rows = table.querySelectorAll("tr");
+        rows.forEach((row, index) => {
+            let cols = row.querySelectorAll("td, th");
+            let text = "";
+            cols.forEach(col => {
+                text += col.innerText + " \t ";
+            });
+            doc.text(text, 10, y);
+            y += 10;
+        });
+    }
+    
+    doc.save("estoque.pdf");
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     viewInventory();
 });
