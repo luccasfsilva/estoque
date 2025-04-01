@@ -72,28 +72,30 @@ function viewInventory() {
 
 function generatePDF() {
     const { jsPDF } = window.jspdf;
-    let doc = new jsPDF();
+    if (!jsPDF) {
+        console.error("jsPDF não foi carregado corretamente.");
+        alert("Erro ao gerar o PDF. Verifique se a biblioteca jsPDF está carregada.");
+        return;
+    }
 
+    let doc = new jsPDF();
     doc.text("Relatório de Estoque", 10, 10);
     let y = 20;
-    
+
     const table = document.querySelector("#inventory-table");
     if (table) {
         let rows = table.querySelectorAll("tr");
-        rows.forEach((row, index) => {
+        rows.forEach((row) => {
             let cols = row.querySelectorAll("td, th");
-            let text = "";
-            cols.forEach(col => {
-                text += col.innerText + " \t ";
-            });
+            let text = Array.from(cols).map(col => col.innerText).join(" | ");
             doc.text(text, 10, y);
             y += 10;
         });
+    } else {
+        alert("Nenhuma tabela encontrada para gerar o PDF.");
+        return;
     }
-    
+
     doc.save("estoque.pdf");
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    viewInventory();
-});
