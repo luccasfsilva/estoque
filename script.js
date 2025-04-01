@@ -1,55 +1,5 @@
 let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-// Adiciona a funcionalidade de gerar PDF ao visualizar o estoque
-function viewInventory() {
-    const inventoryContainer = document.getElementById('inventory-container');
-    
-    let tableHTML = `
-        <h2>Itens no Estoque</h2>
-        <table border="1">
-            <tr>
-                <th>Código</th>
-                <th>Nome</th>
-                <th>Quantidade</th>
-                <th>Saída</th>
-                <th>Quantidade Após Saída</th>
-                <th>Data</th>
-                <th>Setor Destinado</th>
-            </tr>
-            ${inventory.map(item => `
-                <tr>
-                    <td>${item.codigo}</td>
-                    <td>${item.nome}</td>
-                    <td>${item.quantidade}</td>
-                    <td>${item.saida}</td>
-                    <td>${item.quantidadeAposSaida}</td>
-                    <td>${item.data}</td>
-                    <td>${item.setor}</td>
-                </tr>
-            `).join('')}
-        </table>
-    `;
-    
-    inventoryContainer.innerHTML = tableHTML;
-    generatePDF(tableHTML);
-}
-
-function generatePDF(content) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.text("Relatório de Estoque", 10, 10);
-    doc.fromHTML(content, 10, 20);
-    doc.save('relatorio_estoque.pdf');
-}
-
-// Inicializa a visualização ao carregar a página
-document.addEventListener('DOMContentLoaded', function() {
-    viewInventory();
-});
-
-    
-let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-
 function saveToLocalStorage() {
     localStorage.setItem('inventory', JSON.stringify(inventory));
 }
@@ -167,9 +117,65 @@ function removerItem(codigo) {
     }
 }
 
+let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+
+// Adicione essas linhas no início do seu script para carregar as bibliotecas
+const jsPDF = window.jspdf.jsPDF;
+
+function generatePDF() {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(18);
+    doc.text("Relatório de Estoque", 14, 22);
+    
+    const date = new Date().toLocaleDateString();
+    doc.setFontSize(12);
+    doc.text(`Data do relatório: ${date}`, 14, 30);
+    
+    const headers = [['Código', 'Nome', 'Quantidade', 'Saída', 'Qtd. Restante', 'Data', 'Setor']];
+    
+    const data = inventory.map(item => [
+        item.codigo,
+        item.nome,
+        item.quantidade.toString(),
+        item.saida.toString(),
+        item.quantidadeAposSaida.toString(),
+        item.data,
+        item.setor
+    ]);
+    
+    doc.autoTable({
+        startY: 40,
+        head: headers,
+        body: data,
+        theme: 'grid',
+        styles: { fontSize: 10 },
+        headStyles: { 
+            fillColor: [41, 128, 185],
+            textColor: 255 
+        },
+        columnStyles: {
+            0: { cellWidth: 20 },
+            1: { cellWidth: 30 },
+            2: { cellWidth: 20 },
+            3: { cellWidth: 20 },
+            4: { cellWidth: 25 },
+            5: { cellWidth: 30 },
+            6: { cellWidth: 30 }
+        }
+    });
+    
+    doc.save('relatorio_estoque.pdf');
+}
+
 function viewInventory() {
     const inventoryContainer = document.getElementById('inventory-container');
-    inventoryContainer.innerHTML = 
+    
+    // Gera o PDF automaticamente ao visualizar
+    generatePDF();
+    
+    // Mantém a exibição normal na tela
+    inventoryContainer.innerHTML = `
         <h2>Itens no Estoque</h2>
         <table>
             <tr>
@@ -181,7 +187,7 @@ function viewInventory() {
                 <th>Data</th>
                 <th>Setor Destinado</th>
             </tr>
-            ${inventory.map(item => 
+            ${inventory.map(item => `
                 <tr>
                     <td>${item.codigo}</td>
                     <td>${item.nome}</td>
@@ -191,9 +197,9 @@ function viewInventory() {
                     <td>${item.data}</td>
                     <td>${item.setor}</td>
                 </tr>
-            ).join('')}
+            `).join('')}
         </table>
-    ;
+    `;
 }
 
 // Inicializa a visualização ao carregar a página
