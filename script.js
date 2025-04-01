@@ -66,8 +66,8 @@ function viewInventory() {
                 </tr>
             `).join('')}
         </table>
-        <button onclick="generatePDF()">Gerar PDF</button>
     `;
+    generatePDF();
 }
 
 function generatePDF() {
@@ -99,3 +99,6 @@ function generatePDF() {
     doc.save("estoque.pdf");
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    viewInventory();
+});
