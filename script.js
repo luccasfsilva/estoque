@@ -1,5 +1,21 @@
 let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
+// Adicione essas linhas no início do seu script para carregar as bibliotecas
+const jsPDF = window.jspdf.jsPDF;
+
+function generatePDF() {
+    const doc = new jsPDF();
+    
+    
+    doc.save('relatorio_estoque.pdf');
+}
+
+function viewInventory() {
+    const inventoryContainer = document.getElementById('inventory-container');
+    
+    
+let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+
 function saveToLocalStorage() {
     localStorage.setItem('inventory', JSON.stringify(inventory));
 }
@@ -37,7 +53,7 @@ function showAddForm() {
 function adicionarItem(codigo, nome, quantidade, saida, quantidadeAposSaida, data, setor) {
     inventory.push({ codigo, nome, quantidade, saida, quantidadeAposSaida, data, setor });
     saveToLocalStorage();
-    viewInventory();
+    viewInventory(); // 🔥 Atualiza a tabela automaticamente
 }
 
 function showUpdateForm() {
@@ -81,7 +97,7 @@ function atualizarItem(codigo, quantidade, saida, data, setor) {
     }
     if (itemAtualizado) {
         saveToLocalStorage();
-        viewInventory();
+        viewInventory(); // 🔥 Atualiza a tabela automaticamente
     } else {
         alert('Item não encontrado!');
     }
@@ -111,7 +127,7 @@ function removerItem(codigo) {
     if (novoInventory.length !== inventory.length) {
         inventory = novoInventory;
         saveToLocalStorage();
-        viewInventory();
+        viewInventory(); // 🔥 Atualiza a tabela automaticamente
     } else {
         alert('Código não encontrado!');
     }
