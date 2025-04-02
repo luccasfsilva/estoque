@@ -121,7 +121,7 @@ function viewInventory() {
     const inventoryContainer = document.getElementById('inventory-container');
     inventoryContainer.innerHTML = `
         <h2>Itens no Estoque</h2>
-        <table>
+        <table border="1">
             <tr>
                 <th>Código</th>
                 <th>Nome</th>
@@ -144,6 +144,42 @@ function viewInventory() {
             `).join('')}
         </table>
     `;
+}
+
+// Função para gerar PDF
+function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.text("Relatório de Estoque", 20, 10);
+
+    let y = 20; // Posição inicial no PDF
+    doc.setFont("helvetica", "normal");
+
+    // Cabeçalho da tabela
+    doc.text("Código", 10, y);
+    doc.text("Nome", 40, y);
+    doc.text("Qtd.", 80, y);
+    doc.text("Saída", 100, y);
+    doc.text("Qtd. Final", 120, y);
+    doc.text("Data", 140, y);
+    doc.text("Setor", 160, y);
+    y += 10;
+
+    // Adicionando os itens do estoque
+    inventory.forEach(item => {
+        doc.text(item.codigo, 10, y);
+        doc.text(item.nome, 40, y);
+        doc.text(String(item.quantidade), 80, y);
+        doc.text(String(item.saida), 100, y);
+        doc.text(String(item.quantidadeAposSaida), 120, y);
+        doc.text(item.data, 140, y);
+        doc.text(item.setor, 160, y);
+        y += 10;
+    });
+
+    doc.save("relatorio_estoque.pdf");
 }
 
 // Inicializa a visualização ao carregar a página
