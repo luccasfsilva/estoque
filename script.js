@@ -1,4 +1,5 @@
- const { jsPDF } = window.jspdf;
+// Inicializa o jsPDF
+        const { jsPDF } = window.jspdf;
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
         // Funções para mostrar formulários
@@ -123,54 +124,65 @@
             `;
         }
 
-        // Função para gerar PDF
+        // Função para gerar PDF - VERSÃO CORRIGIDA
         function generatePDF() {
-            const doc = new jsPDF();
-            
-            // Título do documento
-            doc.setFontSize(18);
-            doc.text('Relatório de Estoque', 105, 15, { align: 'center' });
-            
-            // Data de emissão
-            const today = new Date();
-            doc.setFontSize(10);
-            doc.text(`Emitido em: ${today.toLocaleDateString()}`, 105, 22, { align: 'center' });
-            
-            // Cabeçalho da tabela
-            const headers = [
-                ['Código', 'Nome', 'Qtd. Inicial', 'Saída', 'Qtd. Final', 'Data', 'Setor']
-            ];
-            
-            // Dados da tabela
-            const data = inventory.map(item => [
-                item.codigo,
-                item.nome,
-                item.quantidade.toString(),
-                item.saida.toString(),
-                item.quantidadeAposSaida.toString(),
-                item.data,
-                item.setor
-            ]);
-            
-            // Configurações da tabela
-            doc.autoTable({
-                head: headers,
-                body: data,
-                startY: 30,
-                theme: 'grid',
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold'
-                },
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
-                margin: { top: 30 }
-            });
-            
-            // Salvar o PDF
-            doc.save(`estoque_${today.toISOString().slice(0,10)}.pdf`);
+            try {
+                // Verifica se a biblioteca está carregada
+                if (typeof jsPDF === 'undefined') {
+                    throw new Error('A biblioteca jsPDF não foi carregada corretamente');
+                }
+                
+                const doc = new jsPDF();
+                
+                // Título do documento
+                doc.setFontSize(18);
+                doc.text('Relatório de Estoque', 105, 15, { align: 'center' });
+                
+                // Data de emissão
+                const today = new Date();
+                doc.setFontSize(10);
+                doc.text(`Emitido em: ${today.toLocaleDateString()}`, 105, 22, { align: 'center' });
+                
+                // Cabeçalho da tabela
+                const headers = [
+                    ['Código', 'Nome', 'Qtd. Inicial', 'Saída', 'Qtd. Final', 'Data', 'Setor']
+                ];
+                
+                // Dados da tabela
+                const data = inventory.map(item => [
+                    item.codigo,
+                    item.nome,
+                    item.quantidade.toString(),
+                    item.saida.toString(),
+                    item.quantidadeAposSaida.toString(),
+                    item.data,
+                    item.setor
+                ]);
+                
+                // Configurações da tabela
+                doc.autoTable({
+                    head: headers,
+                    body: data,
+                    startY: 30,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [41, 128, 185],
+                        textColor: 255,
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [245, 245, 245]
+                    },
+                    margin: { top: 30 }
+                });
+                
+                // Salvar o PDF
+                doc.save(`estoque_${today.toISOString().slice(0,10)}.pdf`);
+                
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Erro ao gerar PDF. Verifique o console para mais detalhes.');
+            }
         }
 
         // Inicialização
