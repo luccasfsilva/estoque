@@ -70,7 +70,7 @@ function generatePDF() {
         }
     });
 
-     window.open("relatorio_estoque.pdf");
+      doc.save("relatorio_estoque.pdf");
 }
 
 // Inicializa a visualização ao carregar a página
