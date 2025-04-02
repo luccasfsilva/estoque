@@ -41,39 +41,39 @@ function generatePDF() {
     
     doc.setFont("helvetica", "bold");
     doc.text("Relatório de Estoque", 14, 10);
-    doc.setFont("helvetica", "normal");
-
-    let startY = 20;
     
-    // Cabeçalho da Tabela
-    let headers = ["Código", "Nome", "Qtd.", "Saída", "Qtd. Final", "Data", "Setor"];
-    let columnWidths = [20, 40, 20, 20, 25, 30, 25];  // Ajuste os tamanhos aqui
+    let tableData = inventory.map(item => [
+        item.codigo,
+        item.nome,
+        item.quantidade,
+        item.saida,
+        item.quantidadeAposSaida,
+        item.data,
+        item.setor
+    ]);
 
-    let startX = 10;
-    headers.forEach((header, i) => {
-        doc.text(header, startX, startY);
-        startX += columnWidths[i];
-    });
-
-    startY += 10; // Pula linha após cabeçalho
-
-    // Dados da Tabela
-    inventory.forEach(item => {
-        let startX = 10;
-        let row = [item.codigo, item.nome, item.quantidade, item.saida, item.quantidadeAposSaida, item.data, item.setor];
-        
-        row.forEach((text, i) => {
-            doc.text(String(text), startX, startY);
-            startX += columnWidths[i];
-        });
-
-        startY += 8; // Espaçamento entre as linhas
+    doc.autoTable({
+        head: [["Código", "Nome", "Qtd.", "Saída", "Qtd. Final", "Data", "Setor"]],
+        body: tableData,
+        startY: 20, 
+        theme: "grid", // Aplica um estilo melhor
+        styles: { fontSize: 10, cellPadding: 3 },
+        headStyles: { fillColor: [50, 50, 150], textColor: 255, fontStyle: "bold" },
+        columnStyles: {
+            0: { cellWidth: 20 }, 
+            1: { cellWidth: 40 },
+            2: { cellWidth: 20 },
+            3: { cellWidth: 20 },
+            4: { cellWidth: 25 },
+            5: { cellWidth: 30 },
+            6: { cellWidth: 30 }
+        }
     });
 
     doc.save("relatorio_estoque.pdf");
 }
 
-// Inicializa o estoque automaticamente ao carregar
+// Inicializa a visualização ao carregar a página
 document.addEventListener('DOMContentLoaded', function() {
     viewInventory();
 });
