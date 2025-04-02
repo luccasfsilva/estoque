@@ -1,28 +1,12 @@
 let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
 
-// Adicione essas linhas no início do seu script para carregar as bibliotecas
-const jsPDF = window.jspdf.jsPDF;
-
-function generatePDF() {
-    const doc = new jsPDF();
-    
-    
-    doc.save('relatorio_estoque.pdf');
-}
-
-function viewInventory() {
-    const inventoryContainer = document.getElementById('inventory-container');
-    
-    
-let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-
 function saveToLocalStorage() {
     localStorage.setItem('inventory', JSON.stringify(inventory));
 }
 
 function showAddForm() {
     const formContainer = document.getElementById('form-container');
-    formContainer.innerHTML = 
+    formContainer.innerHTML = `
         <h2>Adicionar Item</h2>
         <form id="addForm">
             <input type="text" id="codigo" placeholder="Código do Produto" required>
@@ -33,7 +17,7 @@ function showAddForm() {
             <input type="text" id="setor" placeholder="Setor" required>
             <button type="submit">Adicionar</button>
         </form>
-    ;
+    `;
 
     document.getElementById('addForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -53,12 +37,12 @@ function showAddForm() {
 function adicionarItem(codigo, nome, quantidade, saida, quantidadeAposSaida, data, setor) {
     inventory.push({ codigo, nome, quantidade, saida, quantidadeAposSaida, data, setor });
     saveToLocalStorage();
-    viewInventory(); // 🔥 Atualiza a tabela automaticamente
+    viewInventory();
 }
 
 function showUpdateForm() {
     const formContainer = document.getElementById('form-container');
-    formContainer.innerHTML = 
+    formContainer.innerHTML = `
         <h2>Atualizar Item</h2>
         <form id="updateForm">
             <input type="text" id="codigo" placeholder="Código do Produto" required>
@@ -68,7 +52,7 @@ function showUpdateForm() {
             <input type="text" id="setor" placeholder="Setor" required>
             <button type="submit">Atualizar</button>
         </form>
-    ;
+    `;
 
     document.getElementById('updateForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -97,7 +81,7 @@ function atualizarItem(codigo, quantidade, saida, data, setor) {
     }
     if (itemAtualizado) {
         saveToLocalStorage();
-        viewInventory(); // 🔥 Atualiza a tabela automaticamente
+        viewInventory();
     } else {
         alert('Item não encontrado!');
     }
@@ -105,13 +89,13 @@ function atualizarItem(codigo, quantidade, saida, data, setor) {
 
 function showRemoveForm() {
     const formContainer = document.getElementById('form-container');
-    formContainer.innerHTML = 
+    formContainer.innerHTML = `
         <h2>Remover Item</h2>
         <form id="removeForm">
             <input type="text" id="codigoRemover" placeholder="Código do Produto" required>
             <button type="submit">Remover</button>
         </form>
-    ;
+    `;
 
     document.getElementById('removeForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -127,7 +111,7 @@ function removerItem(codigo) {
     if (novoInventory.length !== inventory.length) {
         inventory = novoInventory;
         saveToLocalStorage();
-        viewInventory(); // 🔥 Atualiza a tabela automaticamente
+        viewInventory();
     } else {
         alert('Código não encontrado!');
     }
@@ -135,7 +119,7 @@ function removerItem(codigo) {
 
 function viewInventory() {
     const inventoryContainer = document.getElementById('inventory-container');
-    inventoryContainer.innerHTML = 
+    inventoryContainer.innerHTML = `
         <h2>Itens no Estoque</h2>
         <table>
             <tr>
@@ -147,7 +131,7 @@ function viewInventory() {
                 <th>Data</th>
                 <th>Setor Destinado</th>
             </tr>
-            ${inventory.map(item => 
+            ${inventory.map(item => `
                 <tr>
                     <td>${item.codigo}</td>
                     <td>${item.nome}</td>
@@ -157,9 +141,9 @@ function viewInventory() {
                     <td>${item.data}</td>
                     <td>${item.setor}</td>
                 </tr>
-            ).join('')}
+            `).join('')}
         </table>
-    ;
+    `;
 }
 
 // Inicializa a visualização ao carregar a página
