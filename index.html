@@ -1,69 +1,52 @@
-<html lang="pt-br">
-
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Sistema de Gestão de Estoque</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <title>Controle de Estoque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        #inventory-container table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        #inventory-container th, #inventory-container td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        #form-container {
+            margin-top: 20px;
+        }
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+            max-width: 300px;
+        }
+    </style>
 </head>
-
 <body>
 
-    <header>
+    <h1>Gerenciador de Estoque</h1>
 
-        <div class="container">
+    <button onclick="showAddForm()">Adicionar Item</button>
+    <button onclick="showUpdateForm()">Atualizar Item</button>
+    <button onclick="showRemoveForm()">Remover Item</button>
+    <button onclick="viewInventory()">Visualizar Estoque</button>
 
-            <h1>Sistema de Gestão de Estoque</h1>
-
-        </div>
-
-    </header>
-
-    <main class="container">
-
-        <section class="actions">
-
-            <button onclick="showAddForm()">Adicionar Item</button>
-
-            <button onclick="showUpdateForm()">Atualizar Item</button>
-
-            <button onclick="showRemoveForm()">Remover Item</button>
-
-            <button onclick="viewInventory()">Visualizar Estoque</button>
-
-        </section>
-
-        <section class="form-container" id="form-container"></section>
-
-      
-
-        <section class="inventory-container" id="inventory-container"></section>
-
-      
-
-        <!-- Elemento para o gráfico -->
-
-        <section class="chart-container">
-
-          <canvas id="chart"></canvas>
-
-        </section>
-
-      
-
-    </main>
+    <div id="form-container"></div>
+    <div id="inventory-container"></div>
 
     <script src="script.js"></script>
-
 </body>
-
 </html>
