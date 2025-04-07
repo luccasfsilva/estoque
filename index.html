@@ -8,24 +8,34 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
         button {
             margin: 5px;
             padding: 10px 15px;
             cursor: pointer;
         }
+
         #inventory-container table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
-        #inventory-container th, #inventory-container td {
+
+        #inventory-container th,
+        #inventory-container td {
             border: 1px solid #ccc;
             padding: 8px;
             text-align: center;
         }
+
         #form-container {
             margin-top: 20px;
         }
+
         input {
             display: block;
             margin-bottom: 10px;
@@ -39,14 +49,19 @@
 
     <h1>Gerenciador de Estoque</h1>
 
+    <!-- Botões de ações -->
     <button onclick="showAddForm()">Adicionar Item</button>
     <button onclick="showUpdateForm()">Atualizar Item</button>
     <button onclick="showRemoveForm()">Remover Item</button>
     <button onclick="viewInventory()">Visualizar Estoque</button>
 
+    <!-- Formulários serão renderizados aqui -->
     <div id="form-container"></div>
+
+    <!-- Tabela de visualização será renderizada aqui -->
     <div id="inventory-container"></div>
 
+    <!-- Script JS externo -->
     <script src="script.js"></script>
 </body>
 </html>
