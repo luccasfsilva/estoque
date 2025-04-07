@@ -1,92 +1,69 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Controle de Estoque</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f9f9f9;
-        }
 
-        h1 {
-            margin-bottom: 20px;
-            color: #333;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        button {
-            margin: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
+    <title>Sistema de Gestão de Estoque</title>
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    <link rel="stylesheet" href="style.css">
 
-        #inventory-container table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: white;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-        #inventory-container th,
-        #inventory-container td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-        }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        #inventory-container th {
-            background-color: #f2f2f2;
-        }
-
-        #form-container {
-            margin-top: 30px;
-        }
-
-        input {
-            display: block;
-            margin-bottom: 10px;
-            padding: 10px;
-            width: 100%;
-            max-width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 20px;
-            max-width: 400px;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            color: #444;
-        }
-    </style>
 </head>
+
 <body>
 
-    <h1>Gerenciador de Estoque</h1>
+    <header>
 
-    <button onclick="showAddForm()">Adicionar Item</button>
-    <button onclick="showUpdateForm()">Atualizar Item</button>
-    <button onclick="showRemoveForm()">Remover Item</button>
-    <button onclick="viewInventory()">Visualizar Estoque</button>
+        <div class="container">
 
-    <div id="form-container"></div>
-    <div id="inventory-container"></div>
+            <h1>Sistema de Gestão de Estoque</h1>
+
+        </div>
+
+    </header>
+
+    <main class="container">
+
+        <section class="actions">
+
+            <button onclick="showAddForm()">Adicionar Item</button>
+
+            <button onclick="showUpdateForm()">Atualizar Item</button>
+
+            <button onclick="showRemoveForm()">Remover Item</button>
+
+            <button onclick="viewInventory()">Visualizar Estoque</button>
+
+        </section>
+
+        <section class="form-container" id="form-container"></section>
+
+      
+
+        <section class="inventory-container" id="inventory-container"></section>
+
+      
+
+        <!-- Elemento para o gráfico -->
+
+        <section class="chart-container">
+
+          <canvas id="chart"></canvas>
+
+        </section>
+
+      
+
+    </main>
 
     <script src="script.js"></script>
+
 </body>
+
 </html>
