@@ -1,10 +1,13 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     background-image: url('https://checkbits.com.br/wp-content/uploads/2023/04/Organizacao-de-estoque-5-dicas-para-nao-errar.png');
     background-size: cover;
     background-attachment: fixed;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
@@ -25,6 +28,7 @@ header {
     text-align: center;
     border-bottom: 5px solid #0056b3;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
 }
 
 header h1 {
@@ -42,6 +46,8 @@ h2 {
     justify-content: center;
     gap: 10px;
     margin: 20px 0;
+    width: 100%;
+    max-width: 600px;
 }
 
 .actions button {
@@ -54,23 +60,27 @@ h2 {
     cursor: pointer;
     transition: background 0.3s;
     flex: 1;
-    min-width: 150px;
+    min-width: 120px;
 }
 
 .actions button:hover {
     background: #0056b3;
 }
 
-.form-container, .inventory-container {
+#form-container,
+#inventory-container {
     background: #fff;
     padding: 15px;
     margin: 15px 0;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
 }
 
-input, button {
+input,
+button {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
@@ -78,19 +88,20 @@ input, button {
     border: 1px solid #ccc;
 }
 
-.inventory-container table {
+#inventory-container table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.inventory-container th, .inventory-container td {
+#inventory-container th,
+#inventory-container td {
     padding: 10px;
-    text-align: left;
+    text-align: center;
     font-size: 14px;
     border: 1px solid #ccc;
 }
 
-.inventory-container th {
+#inventory-container th {
     background: #3b3b3b;
     color: white;
 }
@@ -101,7 +112,7 @@ input, button {
     margin: auto;
 }
 
-/* RESPONSIVIDADE */
+/* RESPONSIVO */
 @media screen and (max-width: 768px) {
     .container {
         width: 100%;
@@ -114,10 +125,11 @@ input, button {
     }
 
     .actions button {
+        width: 100%;
         min-width: 100%;
     }
 
-    .inventory-container table {
+    #inventory-container table {
         display: block;
         overflow-x: auto;
         white-space: nowrap;
