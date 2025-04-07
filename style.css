@@ -4,12 +4,12 @@ body {
     background-attachment: fixed;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
     padding: 10px;
     font-family: 'Roboto', sans-serif;
+    color: #333;
 }
 
 .container {
@@ -18,24 +18,30 @@ body {
     margin: auto;
 }
 
+/* CABEÇALHO */
 header {
-    background: #3b3b3b;
+    background-color: #3b3b3b;
     color: #fff;
     padding: 20px;
     text-align: center;
     border-bottom: 5px solid #0056b3;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    width: 100%;
 }
 
 header h1 {
-    font-size: 22px;
+    font-size: 24px;
+    margin: 0;
 }
 
 h2 {
-    font-size: 18px;
+    font-size: 20px;
     text-align: center;
+    margin-bottom: 15px;
 }
 
+/* AÇÕES */
 .actions {
     display: flex;
     flex-wrap: wrap;
@@ -47,54 +53,81 @@ h2 {
 .actions button {
     padding: 12px;
     border: none;
-    background: #3b3b3b;
+    background-color: #3b3b3b;
     color: #fff;
     font-size: 14px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
     flex: 1;
     min-width: 150px;
 }
 
 .actions button:hover {
-    background: #0056b3;
+    background-color: #0056b3;
 }
 
-.form-container, .inventory-container {
-    background: #fff;
-    padding: 15px;
+/* CONTAINERS */
+.form-container,
+.inventory-container {
+    background-color: #fff;
+    padding: 20px;
     margin: 15px 0;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
+    max-width: 900px;
 }
 
-input, button {
+/* FORMULÁRIOS E INPUTS */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input {
     width: 100%;
+    max-width: 400px;
     padding: 12px;
-    margin-top: 10px;
+    margin: 10px 0;
     border-radius: 5px;
     border: 1px solid #ccc;
+    font-size: 14px;
 }
 
+button[type="submit"] {
+    background-color: #3b3b3b;
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* TABELA */
 .inventory-container table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 15px;
 }
 
-.inventory-container th, .inventory-container td {
+.inventory-container th,
+.inventory-container td {
     padding: 10px;
-    text-align: left;
+    text-align: center;
     font-size: 14px;
     border: 1px solid #ccc;
 }
 
 .inventory-container th {
-    background: #3b3b3b;
+    background-color: #3b3b3b;
     color: white;
 }
 
+/* GRÁFICO (caso adicione futuramente) */
 .chart-container {
     width: 100%;
     max-width: 500px;
@@ -114,7 +147,8 @@ input, button {
     }
 
     .actions button {
-        min-width: 100%;
+        width: 100%;
+        min-width: unset;
     }
 
     .inventory-container table {
@@ -124,10 +158,10 @@ input, button {
     }
 
     header h1 {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     h2 {
-        font-size: 16px;
+        font-size: 18px;
     }
 }
