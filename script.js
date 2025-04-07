@@ -237,62 +237,34 @@ function removerItem(codigo) {
 
 
 function viewInventory() {
-
     const inventoryContainer = document.getElementById('inventory-container');
 
-    inventoryContainer.innerHTML = 
-
+    inventoryContainer.innerHTML = `
         <h2>Itens no Estoque</h2>
-
         <table>
-
             <tr>
-
                 <th>Código</th>
-
                 <th>Nome</th>
-
                 <th>Quantidade</th>
-
                 <th>Saída</th>
-
                 <th>Quantidade Após Saída</th>
-
                 <th>Data</th>
-
                 <th>Setor Destinado</th>
-
             </tr>
-
-            ${inventory.map(item => 
-
+            ${inventory.map(item => `
                 <tr>
-
                     <td>${item.codigo}</td>
-
                     <td>${item.nome}</td>
-
                     <td>${item.quantidade}</td>
-
                     <td>${item.saida}</td>
-
                     <td>${item.quantidadeAposSaida}</td>
-
                     <td>${item.data}</td>
-
                     <td>${item.setor}</td>
-
                 </tr>
-
-            ).join('')}
-
+            `).join('')}
         </table>
-
-    ;
-
+    `;
 }
-
-
 
 // Inicializa a visualização ao carregar a página
 
