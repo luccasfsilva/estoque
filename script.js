@@ -14,7 +14,7 @@ function showAddForm() {
 
     const formContainer = document.getElementById('form-container');
 
-    formContainer.innerHTML = `
+    formContainer.innerHTML = 
 
         <h2>Adicionar Item</h2>
 
@@ -36,7 +36,7 @@ function showAddForm() {
 
         </form>
 
-    `;
+    ;
 
 
 
@@ -86,7 +86,7 @@ function showUpdateForm() {
 
     const formContainer = document.getElementById('form-container');
 
-    formContainer.innerHTML = `
+    formContainer.innerHTML = 
 
         <h2>Atualizar Item</h2>
 
@@ -106,7 +106,7 @@ function showUpdateForm() {
 
         </form>
 
-    `;
+    ;
 
 
 
@@ -180,7 +180,7 @@ function showRemoveForm() {
 
     const formContainer = document.getElementById('form-container');
 
-    formContainer.innerHTML = `
+    formContainer.innerHTML = 
 
         <h2>Remover Item</h2>
 
@@ -192,7 +192,7 @@ function showRemoveForm() {
 
         </form>
 
-    `;
+    ;
 
 
 
