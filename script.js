@@ -76,6 +76,11 @@ function atualizarItem(codigo, quantidade, saida, data, setor) {
 
     for (let i = 0; i < inventory.length; i++) {
         if (inventory[i].codigo === codigo) {
+            if (saida > quantidade) {
+                alert("A quantidade de saída não pode ser maior que a quantidade disponível!");
+                return;
+            }
+
             inventory[i].quantidade = quantidade;
             inventory[i].saida = saida;
             inventory[i].quantidadeAposSaida = quantidade - saida;
