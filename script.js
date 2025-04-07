@@ -69,6 +69,7 @@ function showUpdateForm() {
 
 function atualizarItem(codigo, quantidade, saida, data, setor) {
     let itemAtualizado = false;
+
     for (let i = 0; i < inventory.length; i++) {
         if (inventory[i].codigo === codigo) {
             inventory[i].quantidade = quantidade;
@@ -124,26 +125,30 @@ function viewInventory() {
     inventoryContainer.innerHTML = `
         <h2>Itens no Estoque</h2>
         <table border="1" cellspacing="0" cellpadding="5">
-            <tr>
-                <th>Código</th>
-                <th>Nome</th>
-                <th>Quantidade</th>
-                <th>Saída</th>
-                <th>Quantidade Após Saída</th>
-                <th>Data</th>
-                <th>Setor Destinado</th>
-            </tr>
-            ${inventory.map(item => `
+            <thead>
                 <tr>
-                    <td>${item.codigo}</td>
-                    <td>${item.nome}</td>
-                    <td>${item.quantidade}</td>
-                    <td>${item.saida}</td>
-                    <td>${item.quantidadeAposSaida}</td>
-                    <td>${item.data}</td>
-                    <td>${item.setor}</td>
+                    <th>Código</th>
+                    <th>Nome</th>
+                    <th>Quantidade</th>
+                    <th>Saída</th>
+                    <th>Quantidade Após Saída</th>
+                    <th>Data</th>
+                    <th>Setor Destinado</th>
                 </tr>
-            `).join('')}
+            </thead>
+            <tbody>
+                ${inventory.map(item => `
+                    <tr>
+                        <td>${item.codigo}</td>
+                        <td>${item.nome}</td>
+                        <td>${item.quantidade}</td>
+                        <td>${item.saida}</td>
+                        <td>${item.quantidadeAposSaida}</td>
+                        <td>${item.data}</td>
+                        <td>${item.setor}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
         </table>
     `;
 }
