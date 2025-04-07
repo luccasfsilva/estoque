@@ -237,38 +237,59 @@ function removerItem(codigo) {
 
 
 function viewInventory() {
+
     const inventoryContainer = document.getElementById('inventory-container');
-    inventoryContainer.innerHTML = '';
 
-    if (inventory.length === 0) {
-        inventoryContainer.innerHTML = '<p>Nenhum item no estoque.</p>';
-        return;
-    }
+    inventoryContainer.innerHTML = 
 
-    // Gera e exibe o PDF diretamente ao clicar no botão
-    function gerarPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+        <h2>Itens no Estoque</h2>
 
-    doc.text("Relatório de Estoque", 14, 15);
+        <table>
 
-    const dadosTabela = inventory.map((item) => [
-        item.codigo,
-        item.nome,
-        item.quantidade,
-        item.saida,
-        item.quantidadeAposSaida,
-        item.data,
-        item.setor
-    ]);
+            <tr>
 
-    doc.autoTable({
-        head: [["Código", "Nome", "Qtd", "Saída", "Qtd Após Saída", "Data", "Setor"]],
-        body: dadosTabela,
-        startY: 20,
-    });
+                <th>Código</th>
 
-    doc.output("dataurlnewwindow"); // Abre o PDF numa nova aba
+                <th>Nome</th>
+
+                <th>Quantidade</th>
+
+                <th>Saída</th>
+
+                <th>Quantidade Após Saída</th>
+
+                <th>Data</th>
+
+                <th>Setor Destinado</th>
+
+            </tr>
+
+            ${inventory.map(item => 
+
+                <tr>
+
+                    <td>${item.codigo}</td>
+
+                    <td>${item.nome}</td>
+
+                    <td>${item.quantidade}</td>
+
+                    <td>${item.saida}</td>
+
+                    <td>${item.quantidadeAposSaida}</td>
+
+                    <td>${item.data}</td>
+
+                    <td>${item.setor}</td>
+
+                </tr>
+
+            ).join('')}
+
+        </table>
+
+    ;
+
 }
 
 
