@@ -1,0 +1,29 @@
+[
+    {
+        "codigo": "12",
+        "nome": "Apostila",
+        "quantidade": 123,
+        "saida": 12,
+        "quantidadeAposSaida": 111,
+        "data": "2025-04-24",
+        "setor": "fiscal"
+    },
+    {
+        "codigo": "1233",
+        "nome": "caixa",
+        "quantidade": 500,
+        "saida": 350,
+        "quantidadeAposSaida": 150,
+        "data": "2025-04-24",
+        "setor": "financeiro"
+    },
+    {
+        "codigo": "554",
+        "nome": "Cabides",
+        "quantidade": 800,
+        "saida": 400,
+        "quantidadeAposSaida": 400,
+        "data": "2025-04-25",
+        "setor": "Comercial"
+    }
+]
