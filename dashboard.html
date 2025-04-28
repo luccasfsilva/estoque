@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard de Estoque</title>
+  
+  <!-- Fonte Roboto -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <!-- Cabeçalho -->
+    <header>
+      <h1>Dashboard de Estoque</h1>
+    </header>
+
+    <!-- Container do gráfico -->
+    <div class="chart-container">
+      <canvas id="estoqueChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Script do Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    // Obtendo os dados enviados pelo Flask
+    const labels = JSON.parse('{{ produtos | tojson | safe }}');
+    const data = JSON.parse('{{ quantidades | tojson | safe }}');
+
+    console.log("Produtos:", labels); // Log dos produtos
+    console.log("Quantidades:", data); // Log das quantidades
+
+    // Configuração do gráfico
+    const ctx = document.getElementById('estoqueChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar', // Tipo de gráfico: barra
+      data: {
+        labels: labels, // Rótulos do eixo X
+        datasets: [{
+          label: 'Quantidade em Estoque', // Legenda
+          data: data, // Dados do eixo Y
+          backgroundColor: '#007bff', // Cor de fundo das barras
+          borderWidth: 1 // Largura da borda
+        }]
+      },
+      options: {
+        responsive: true, // Torna o gráfico responsivo
+        maintainAspectRatio: false, // Não mantém proporção fixa
+        scales: {
+          y: {
+            beginAtZero: true // Eixo Y começa do zero
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
