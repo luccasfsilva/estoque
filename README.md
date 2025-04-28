@@ -2,7 +2,7 @@
 
 Este é um sistema simples de controle de estoque desenvolvido com **HTML**, **CSS** e **JavaScript**, ideal para uso pessoal ou como base para projetos maiores. A aplicação é executada inteiramente no navegador e permite o **cadastro, edição, exclusão e visualização de produtos**.
 
-🔗 **Acesse aqui:** [luccasfsilva.github.io/estoque](https://luccasfsilva.github.io/estoque/)
+🔗 **Acesse aqui:** [luccasfsilva.github.io/estoque](https://github.com/luccasfsilva/estoque/blob/main/backend/app.py)
 
 ---
 
