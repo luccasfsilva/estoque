@@ -42,7 +42,7 @@ Este é um sistema simples de controle de estoque desenvolvido com **HTML**, **C
 
 ## 💡 Possíveis Melhorias Futuras
 
-- Integração com banco de dados (Firebase, Supabase, etc.)
+- Integração com banco de dados (SqLite, Firebase, Supabase, etc.)
 - Autenticação de usuários
 - Responsividade mobile aprimorada
 - Exportação dos dados para CSV
