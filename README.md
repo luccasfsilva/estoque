@@ -22,6 +22,7 @@ Este é um sistema simples de controle de estoque desenvolvido com **HTML**, **C
 - **HTML5**
 - **CSS3**
 - **JavaScript (Vanilla)**
+- **Python (Flask)**
 
 ---
 
