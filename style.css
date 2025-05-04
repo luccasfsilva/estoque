@@ -1,3 +1,4 @@
+
 * {
     box-sizing: border-box;
 }
@@ -107,10 +108,15 @@ button {
 }
 
 .chart-container {
+    background-color: white; /* Define o fundo branco */
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adiciona sombra para destacar */
     width: 100%;
-    max-width: 500px;
-    margin: auto;
+    max-width: 500px; /* Define o tamanho máximo do gráfico */
+    padding: 20px; /* Adiciona espaçamento interno */
+    margin: auto; /* Centraliza o gráfico */
 }
+
 
 /* RESPONSIVO */
 @media screen and (max-width: 768px) {
@@ -142,25 +148,4 @@ button {
     h2 {
         font-size: 16px;
     }
-}
-.login-container {
-    background: #fff;
-    padding: 20px;
-    width: 300px;
-    margin: 100px auto;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    text-align: center;
-}
-.login-container input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-}
-.login-container button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
 }

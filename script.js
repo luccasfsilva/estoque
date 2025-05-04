@@ -127,7 +127,7 @@ function showAddForm() {
   
     fetch('/api/items')
         .then((res) => res.json())
-        .then ((data) => {
+        .then((data) => {
             inventoryContainer.innerHTML = `
                 <h2>Itens no Estoque</h2>
                 <table>
