@@ -1,52 +1,15 @@
-# 📦 Sistema de Controle de Estoque
+> Why do I have a folder named ".expo" in my project?
 
-Este é um sistema simples de controle de estoque desenvolvido com **HTML**, **CSS**, **JavaScript** e **Python**, ideal para uso pessoal ou como base para projetos maiores. A aplicação é executada inteiramente no navegador e permite o **cadastro, edição, exclusão e visualização de produtos**.
+The ".expo" folder is created when an Expo project is started using "expo start" command.
 
-🔗 **Acesse aqui:** [luccasfsilva.github.io/estoque](https://luccasfsilva.github.io/estoque)
+> What do the files contain?
 
----
+- "devices.json": contains information about devices that have recently opened this project. This is used to populate the "Development sessions" list in your development builds.
+- "packager-info.json": contains port numbers and process PIDs that are used to serve the application to the mobile device/simulator.
+- "settings.json": contains the server configuration that is used to serve the application manifest.
 
-## ✨ Funcionalidades
+> Should I commit the ".expo" folder?
 
-- ✅ Cadastro de produtos com nome, quantidade e valor
-- ✏️ Edição dos produtos existentes
-- 🗑️ Exclusão de produtos do estoque
-- 📊 Visualização em tabela de todos os produtos cadastrados
-- 💾 Armazenamento local (usando `localStorage`)
-- 🔍 Busca dinâmica por nome do produto
+No, you should not share the ".expo" folder. It does not contain any information that is relevant for other developers working on the project, it is specific to your machine.
 
----
-
-## 🛠️ Tecnologias Utilizadas
-
-- **HTML5**
-- **CSS3**
-- **JavaScript (Vanilla)**
-- **Python (Flask)**
-
----
-
-## 📷 Capturas de Tela
-
-> *(Adicione aqui prints da aplicação para facilitar a visualização)*
-
----
-
-## 🚀 Como Usar
-
-1. Acesse o site através do link: [https://luccasfsilva.github.io/estoque/](https://luccasfsilva.github.io/estoque/)
-2. Adicione um novo produto preenchendo os campos e clicando em "Cadastrar"
-3. Use os botões de "Editar" ou "Excluir" conforme necessário
-4. A busca funciona automaticamente enquanto digita no campo de pesquisa
-
----
-
-## 💡 Possíveis Melhorias Futuras
-
-- Integração com banco de dados (SqLite, Firebase, Supabase, etc.)
-- Autenticação de usuários
-- Responsividade mobile aprimorada
-- Exportação dos dados para CSV
-
----
-
+Upon project creation, the ".expo" folder is already added to your ".gitignore" file.
