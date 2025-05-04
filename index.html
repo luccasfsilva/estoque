@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Controle de Estoque</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-   <link rel="stylesheet" href="styles.css">
-    <style type="text/css">
-      * {
+  <link rel="stylesheet" href="styles.css">
+  <style>
+   * {
     box-sizing: border-box;
 }
 
@@ -173,7 +173,7 @@ button {
     border: none;
     border-radius: 5px;
 }
-      </style>
+  </style>
 </head>
 <body>
   <div class="container">
@@ -184,178 +184,189 @@ button {
       <button onclick="showAddForm()">Adicionar Item</button>
       <button onclick="showUpdateForm()">Atualizar Item</button>
       <button onclick="showRemoveForm()">Remover Item</button>
-      <a href="/dashboard"><button>Visualizar Dashboard</button></a>
+      <button onclick="window.location.href='/dashboard'">Visualizar Dashboard</button>
     </section>
     <div class="form-container" id="form-container"></div>
     <div class="inventory-container" id="inventory-container"></div>
   </div>
-  <script src="/script.js">
+
+  <script>
     function showAddForm() {
-    const formContainer = document.getElementById('form-container');
-  
-    formContainer.innerHTML = `
+      const formContainer = document.getElementById('form-container');
+
+      formContainer.innerHTML = `
         <h2>Adicionar Item</h2>
         <form id="addForm">
-            <input type="text" id="codigo" placeholder="Código do Produto" required>
-            <input type="text" id="nome" placeholder="Nome do Item" required>
-            <input type="number" id="quantidade" placeholder="Quantidade" required>
-            <input type="number" id="saida" placeholder="Quantidade de Saída" required>
-            <input type="date" id="data" required>
-            <input type="text" id="setor" placeholder="Setor" required>
-            <button type="submit">Adicionar</button>
+          <input type="text" id="codigo" placeholder="Código do Produto" required>
+          <input type="text" id="nome" placeholder="Nome do Item" required>
+          <input type="number" id="quantidade" placeholder="Quantidade" required>
+          <input type="number" id="saida" placeholder="Quantidade de Saída" required>
+          <input type="date" id="data" required>
+          <input type="text" id="setor" placeholder="Setor" required>
+          <button type="submit">Adicionar</button>
         </form>
-    `;
-  
-    document.getElementById('addForm').addEventListener('submit', function (e) {
+      `;
+
+      document.getElementById('addForm').addEventListener('submit', function (e) {
         e.preventDefault();
-  
+
         let codigo = document.getElementById('codigo').value.trim();
         if (!codigo) {
-            alert("O código do item é obrigatório!");
-            return;
+          alert("O código do item é obrigatório!");
+          return;
         }
-  
+
         let nome = document.getElementById('nome').value.trim();
         let quantidade = parseInt(document.getElementById('quantidade').value);
         let saida = parseInt(document.getElementById('saida').value);
         let data = document.getElementById('data').value.trim();
         let setor = document.getElementById('setor').value.trim();
-  
-        const novoItem = { codigo, nome, quantidade, saida, quantidadeAposSaida: quantidade - saida, data, setor };
-  
+
+        const novoItem = {
+          codigo,
+          nome,
+          quantidade,
+          saida,
+          quantidadeAposSaida: quantidade - saida,
+          data,
+          setor
+        };
+
         fetch('/api/items', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(novoItem),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(novoItem),
         })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log('Item adicionado:', data);
-                viewInventory();
-                formContainer.innerHTML = '';
-            })
-            .catch((err) => console.error('Erro ao adicionar item:', err));
-    });
-  }
-  
-  function showUpdateForm() {
-    const formContainer = document.getElementById('form-container');
-  
-    formContainer.innerHTML = `
+          .then((res) => res.json())
+          .then((data) => {
+            console.log('Item adicionado:', data);
+            viewInventory();
+            formContainer.innerHTML = '';
+          })
+          .catch((err) => console.error('Erro ao adicionar item:', err));
+      });
+    }
+
+    function showUpdateForm() {
+      const formContainer = document.getElementById('form-container');
+
+      formContainer.innerHTML = `
         <h2>Atualizar Item</h2>
         <form id="updateForm">
-            <input type="text" id="codigo" placeholder="Código do Produto" required>
-            <input type="number" id="quantidade" placeholder="Nova Quantidade" required>
-            <input type="number" id="saida" placeholder="Nova Quantidade de Saída" required>
-            <input type="date" id="data" required>
-            <input type="text" id="setor" placeholder="Setor" required>
-            <button type="submit">Atualizar</button>
+          <input type="text" id="codigo" placeholder="Código do Produto" required>
+          <input type="number" id="quantidade" placeholder="Nova Quantidade" required>
+          <input type="number" id="saida" placeholder="Nova Quantidade de Saída" required>
+          <input type="date" id="data" required>
+          <input type="text" id="setor" placeholder="Setor" required>
+          <button type="submit">Atualizar</button>
         </form>
-    `;
-  
-    document.getElementById('updateForm').addEventListener('submit', function (e) {
+      `;
+
+      document.getElementById('updateForm').addEventListener('submit', function (e) {
         e.preventDefault();
-  
+
         let codigo = document.getElementById('codigo').value.trim();
         let quantidade = parseInt(document.getElementById('quantidade').value);
         let saida = parseInt(document.getElementById('saida').value);
         let data = document.getElementById('data').value.trim();
         let setor = document.getElementById('setor').value.trim();
-  
-        const itemAtualizado = { quantidade, saida, quantidadeAposSaida: quantidade - saida, data, setor };
-  
+
+        const itemAtualizado = {
+          quantidade,
+          saida,
+          quantidadeAposSaida: quantidade - saida,
+          data,
+          setor
+        };
+
         fetch(`/api/items/${codigo}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(itemAtualizado),
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(itemAtualizado),
         })
-            .then((res) => {
-                if (!res.ok) throw new Error('Erro ao atualizar item');
-                return res.json();
-            })
-            .then((data) => {
-                console.log('Item atualizado:', data);
-                viewInventory();
-                formContainer.innerHTML = '';
-            })
-            .catch((err) => console.error('Erro ao atualizar item:', err));
-    });
-  }
-  
-  function showRemoveForm() {
-    const formContainer = document.getElementById('form-container');
-  
-    formContainer.innerHTML = `
+          .then((res) => {
+            if (!res.ok) throw new Error('Erro ao atualizar item');
+            return res.json();
+          })
+          .then((data) => {
+            console.log('Item atualizado:', data);
+            viewInventory();
+            formContainer.innerHTML = '';
+          })
+          .catch((err) => console.error('Erro ao atualizar item:', err));
+      });
+    }
+
+    function showRemoveForm() {
+      const formContainer = document.getElementById('form-container');
+
+      formContainer.innerHTML = `
         <h2>Remover Item</h2>
         <form id="removeForm">
-            <input type="text" id="codigoRemover" placeholder="Código do Produto" required>
-            <button type="submit">Remover</button>
+          <input type="text" id="codigoRemover" placeholder="Código do Produto" required>
+          <button type="submit">Remover</button>
         </form>
-    `;
-  
-    document.getElementById('removeForm').addEventListener('submit', function (e) {
+      `;
+
+      document.getElementById('removeForm').addEventListener('submit', function (e) {
         e.preventDefault();
-  
+
         let codigo = document.getElementById('codigoRemover').value.trim();
-  
+
         fetch(`/api/items/${codigo}`, {
-            method: 'DELETE',
+          method: 'DELETE',
         })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    viewInventory();
-                }
-                formContainer.innerHTML = '';
-            })
-            .catch((err) => console.error('Erro ao remover item:', err));
-    });
-  }
-  
-  function viewInventory() {
-    const inventoryContainer = document.getElementById('inventory-container');
-  
-    fetch('/api/items')
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error);
+            } else {
+              viewInventory();
+            }
+            formContainer.innerHTML = '';
+          })
+          .catch((err) => console.error('Erro ao remover item:', err));
+      });
+    }
+
+    function viewInventory() {
+      const inventoryContainer = document.getElementById('inventory-container');
+
+      fetch('/api/items')
         .then((res) => res.json())
         .then((data) => {
-            inventoryContainer.innerHTML = `
-                <h2>Itens no Estoque</h2>
-                <table>
-                    <tr>
-                        <th>Código</th>
-                        <th>Nome</th>
-                        <th>Quantidade</th>
-                        <th>Saída</th>
-                        <th>Quantidade Após Saída</th>
-                        <th>Data</th>
-                        <th>Setor</th>
-                    </tr>
-                    ${data
-                        .map(
-                            (item) => `
-                        <tr>
-                            <td>${item.codigo}</td>
-                            <td>${item.nome}</td>
-                            <td>${item.quantidade}</td>
-                            <td>${item.saida}</td>
-                            <td>${item.quantidadeAposSaida}</td>
-                            <td>${item.data}</td>
-                            <td>${item.setor}</td>
-                        </tr>
-                    `
-                        )
-                        .join('')}
-                </table>
-            `;
+          inventoryContainer.innerHTML = `
+            <h2>Itens no Estoque</h2>
+            <table>
+              <tr>
+                <th>Código</th>
+                <th>Nome</th>
+                <th>Quantidade</th>
+                <th>Saída</th>
+                <th>Quantidade Após Saída</th>
+                <th>Data</th>
+                <th>Setor</th>
+              </tr>
+              ${data.map((item) => `
+                <tr>
+                  <td>${item.codigo}</td>
+                  <td>${item.nome}</td>
+                  <td>${item.quantidade}</td>
+                  <td>${item.saida}</td>
+                  <td>${item.quantidadeAposSaida}</td>
+                  <td>${item.data}</td>
+                  <td>${item.setor}</td>
+                </tr>
+              `).join('')}
+            </table>
+          `;
         })
         .catch((err) => console.error('Erro ao buscar inventário:', err));
-  }
-  
-  document.addEventListener('DOMContentLoaded', function () {
-    viewInventory();
-  });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      viewInventory();
+    });
   </script>
 </body>
 </html>
