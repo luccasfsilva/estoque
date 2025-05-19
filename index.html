@@ -6,92 +6,63 @@
   <title>Controle de Estoque</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <style>
-    /* estilos simplificados para foco no gráfico + funcionalidade */
-* {
-    box-sizing: border-box;
-}
+    * { box-sizing: border-box; }
 
-body {
-    background-image: url('https://checkbits.com.br/wp-content/uploads/2023/04/Organizacao-de-estoque-5-dicas-para-nao-errar.png');
-    background-size: cover;
-    background-attachment: fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 15px;
-    font-family: 'Roboto', sans-serif;
-}
-
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-}
-
-header {
-    background: #3b3b3b;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-    border-bottom: 5px solid #0056b3;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 100%;
-}
-
-header h1 {
-    font-size: 22px;
-}
-
-h2 {
-    font-size: 18px;
-    text-align: center;
-}
-
-.actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-    width: 100%;
-    max-width: 600px;
-}
-
-.actions button {
-    padding: 12px;
-    border: none;
-    background: #3b3b3b;
-    color: #fff;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-    flex: 1;
-    min-width: 120px;
-}
-
-.actions button:hover {
-    background: #0056b3;
-}
-    .form-container{
-       background: #fff;
-      padding: 20px;
-      margin: 20px auto;
-      border-radius: 10px;
-      max-width: 800px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    body {
+      background-image: url('https://checkbits.com.br/wp-content/uploads/2023/04/Organizacao-de-estoque-5-dicas-para-nao-errar.png');
+      background-size: cover;
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 15px;
+      font-family: 'Roboto', sans-serif;
     }
-    .inventory-container{
-    background: #fff;
-      padding: 20px;
-      margin: 20px auto;
-      border-radius: 10px;
-      max-width: 800px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+    header, .actions, .form-container, .inventory-container, .dashboard-container {
+      display: none; /* esconde tudo até login ser feito */
     }
-    .dashboard-container {
+
+    header {
+      background: #3b3b3b;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 5px solid #0056b3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 100%;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .actions button {
+      padding: 12px;
+      border: none;
+      background: #3b3b3b;
+      color: #fff;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .actions button:hover {
+      background: #0056b3;
+    }
+
+    .form-container, .inventory-container, .dashboard-container {
       background: #fff;
       padding: 20px;
       margin: 20px auto;
@@ -100,114 +71,72 @@ h2 {
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-#form-container,
-#inventory-container {
-    background: #fff;
-    padding: 15px;
-    margin: 15px 0;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 800px;
-    overflow-x: auto;
-}
-
-input,
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-#inventory-container table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#inventory-container th,
-#inventory-container td {
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-    border: 1px solid #ccc;
-}
-
-#inventory-container th {
-    background: #3b3b3b;
-    color: white;
-}
-
-.chart-container {
-    width: 100%;
-    max-width: 500px;
-    margin: auto;
-}
-
-/* RESPONSIVO */
-@media screen and (max-width: 768px) {
-    .container {
-        width: 100%;
-        padding: 10px;
+    .login-container {
+      background: #fff;
+      padding: 20px;
+      width: 300px;
+      margin: 100px auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      text-align: center;
     }
 
-    .actions {
-        flex-direction: column;
-        align-items: center;
+    .login-container input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
     }
 
-    .actions button {
-        width: 100%;
-        min-width: 100%;
+    .login-container button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
-    #inventory-container table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
 
-    header h1 {
-        font-size: 18px;
+    th, td {
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      border: 1px solid #ccc;
     }
 
-    h2 {
-        font-size: 16px;
+    th {
+      background: #3b3b3b;
+      color: white;
     }
-}
-.login-container {
-    background: #fff;
-    padding: 20px;
-    width: 300px;
-    margin: 100px auto;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    text-align: center;
-}
-.login-container input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-}
-.login-container button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
-    .dashboard-container {
-      display: none;
+
+    .chart-container {
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
     }
   </style>
 </head>
 <body>
-  <header>
+
+  <!-- Login -->
+  <div class="login-container" id="login-container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Usuário" required>
+    <input type="password" id="password" placeholder="Senha" required>
+    <button onclick="login()">Entrar</button>
+    <p id="login-error" style="color:red;"></p>
+  </div>
+
+  <!-- Conteúdo do Sistema -->
+  <header id="main-header">
     <h1>Controle de Estoque</h1>
   </header>
 
-  <div class="actions">
+  <div class="actions" id="actions">
     <button onclick="showAddForm()">Adicionar Item</button>
     <button onclick="showUpdateForm()">Atualizar Item</button>
     <button onclick="showRemoveForm()">Remover Item</button>
@@ -216,6 +145,7 @@ button {
 
   <div id="form-container" class="form-container"></div>
   <div id="inventory-container" class="inventory-container"></div>
+
   <div id="dashboard-container" class="dashboard-container">
     <h2>Dashboard de Estoque</h2>
     <div class="chart-container">
@@ -227,6 +157,24 @@ button {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const errorEl = document.getElementById('login-error');
+
+      if (user === "admin" && pass === "1234") {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('main-header').style.display = 'block';
+        document.getElementById('actions').style.display = 'flex';
+        document.querySelector('.form-container').style.display = 'block';
+        document.querySelector('.inventory-container').style.display = 'block';
+        viewInventory();
+        updateChart();
+      } else {
+        errorEl.textContent = "Usuário ou senha inválidos.";
+      }
+    }
+
     let inventoryData = [
       { codigo: "001", nome: "Teclado", quantidade: 20, saida: 5, quantidadeAposSaida: 15, data: "2024-04-10", setor: "TI" },
       { codigo: "002", nome: "Mouse", quantidade: 30, saida: 10, quantidadeAposSaida: 20, data: "2024-04-12", setor: "TI" },
@@ -249,7 +197,6 @@ button {
 
       document.getElementById('addForm').addEventListener('submit', function (e) {
         e.preventDefault();
-
         const novoItem = {
           codigo: document.getElementById('codigo').value,
           nome: document.getElementById('nome').value,
@@ -283,7 +230,6 @@ button {
 
       document.getElementById('updateForm').addEventListener('submit', function (e) {
         e.preventDefault();
-
         const codigo = document.getElementById('codigo').value;
         const index = inventoryData.findIndex(item => item.codigo === codigo);
         if (index === -1) return alert("Item não encontrado!");
@@ -382,9 +328,7 @@ button {
           options: {
             responsive: true,
             scales: {
-              y: {
-                beginAtZero: true
-              }
+              y: { beginAtZero: true }
             }
           }
         });
@@ -396,11 +340,6 @@ button {
       dashboard.style.display = dashboard.style.display === 'none' ? 'block' : 'none';
       updateChart();
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      viewInventory();
-      updateChart();
-    });
   </script>
 </body>
 </html>
