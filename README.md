@@ -5,7 +5,14 @@
  🔗 **Acesse aqui:** [luccasfsilva.github.io/estoque](https://luccasfsilva.github.io/estoque)
  
  ---
- 
+  ## 🚀 Executando a API
+
+ - no terminal execute `cd backend/`
+ - em seguida `pip install -r requirements.txt`
+ - e `python app.py` para executar a api
+
+ ---
+
  ## ✨ Funcionalidades
  
  - ✅ Cadastro de produtos com nome, quantidade e valor
