@@ -256,6 +256,42 @@ button {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
+    window.onload = function () {
+      verifyAccess();
+    }
+
+    function verifyAccess() {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        if(isTokenExpired(token))
+          localStorage.removeItem("access_token");
+        else
+          showSystemContent();
+      }
+    }
+
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function isTokenExpired(token) {
+      const payload = parseJwt(token);
+      console.log({payload})
+      if (!payload || !payload.exp) return true;
+      const currentTime = Math.floor(Date.now() / 1000);
+      console.log("expira em: ", new Date(payload.exp * 1000))
+      return payload.exp < currentTime;
+    }
+
     function toggleLoginRegister() {
       const login = document.getElementById("login-container");
       const register = document.getElementById("register-container");
@@ -290,33 +326,36 @@ button {
 
     async function login() {
       const user = document.getElementById("username").value;
-        const pass = document.getElementById("password").value;
-        const errorEl = document.getElementById("login-error");
+      const pass = document.getElementById("password").value;
+      const errorEl = document.getElementById("login-error");
 
-        try {
-          const res = await fetch("http://localhost:5000/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: user, password: pass }),
-          });
-          const data = await res.json();
-
-          if (res.ok && data.access_token) {
-            token = data.access_token;
-            document.getElementById("login-container").style.display = "none";
-            document.getElementById("main-header").style.display = "block";
-            document.getElementById("actions").style.display = "flex";
-            document.querySelector(".form-container").style.display = "block";
-            document.querySelector(".inventory-container").style.display =
-              "block";
-            viewInventory();
-            updateChart();
-          } else {
-            errorEl.textContent = data.error || "Login falhou";
-          }
-        } catch (err) {
-          errorEl.textContent = "Erro de conexão com API";
+      try {
+        const res = await fetch("http://localhost:5000/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: user, password: pass }),
+        });
+        const data = await res.json();
+        if (res.ok && data.access_token) {
+          localStorage.setItem("access_token", data.access_token);
+          showSystemContent()
+        } else {
+          errorEl.textContent = data.error || "Login falhou";
         }
+      } catch (err) {
+        errorEl.textContent = "Erro de conexão com API";
+      }
+    }
+
+    function showSystemContent() {
+      document.getElementById("login-container").style.display = "none";
+      document.getElementById("main-header").style.display = "block";
+      document.getElementById("actions").style.display = "flex";
+      document.querySelector(".form-container").style.display = "block";
+      document.querySelector(".inventory-container").style.display = "block";
+      
+      viewInventory();
+      updateChart();
     }
 
     let inventoryData = [
