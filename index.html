@@ -200,13 +200,34 @@ button {
 </head>
 <body>
 
+  <!-- Register -->
+  <div class="login-container" id="register-container" style="display: none">
+    <h2>Registrar</h2>
+    <input
+      type="text"
+      id="reg-username"
+      placeholder="Novo Usuário"
+      required
+    />
+    <input
+      type="password"
+      id="reg-password"
+      placeholder="Nova Senha"
+      required
+    />
+    <button onclick="register()">Registrar</button>
+    <button onclick="toggleLoginRegister()">Voltar para Login</button>
+    <p id="register-error" style="color: red"></p>
+  </div>
+
   <!-- Login -->
   <div class="login-container" id="login-container">
     <h2>Login</h2>
-    <input type="text" id="username" placeholder="Usuário" required>
-    <input type="password" id="password" placeholder="Senha" required>
+    <input type="text" id="username" placeholder="Usuário" required />
+    <input type="password" id="password" placeholder="Senha" required />
     <button onclick="login()">Entrar</button>
-    <p id="login-error" style="color:red;"></p>
+    <button onclick="toggleLoginRegister()">Criar Conta</button>
+    <p id="login-error" style="color: red"></p>
   </div>
 
   <!-- Conteúdo do Sistema -->
@@ -235,22 +256,67 @@ button {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-    function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      const errorEl = document.getElementById('login-error');
+    function toggleLoginRegister() {
+      const login = document.getElementById("login-container");
+      const register = document.getElementById("register-container");
+      login.style.display = login.style.display === "none" ? "block" : "none";
+      register.style.display =
+        register.style.display === "none" ? "block" : "none";
+    }
 
-      if (user === "admin" && pass === "1234") {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('main-header').style.display = 'block';
-        document.getElementById('actions').style.display = 'flex';
-        document.querySelector('.form-container').style.display = 'block';
-        document.querySelector('.inventory-container').style.display = 'block';
-        viewInventory();
-        updateChart();
-      } else {
-        errorEl.textContent = "Usuário ou senha inválidos.";
+    async function register() {
+      const user = document.getElementById("reg-username").value;
+      const pass = document.getElementById("reg-password").value;
+      const errorEl = document.getElementById("register-error");
+
+      try {
+        const res = await fetch("http://localhost:5000/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: user, password: pass }),
+        });
+        const data = await res.json();
+
+        if (res.status === 201) {
+          alert(data.message);
+          toggleLoginRegister();
+        } else {
+          errorEl.textContent = data.error || "Erro ao registrar.";
+        }
+      } catch (err) {
+        errorEl.textContent = "Erro de conexão com API";
       }
+    }
+
+    async function login() {
+      const user = document.getElementById("username").value;
+        const pass = document.getElementById("password").value;
+        const errorEl = document.getElementById("login-error");
+
+        try {
+          const res = await fetch("http://localhost:5000/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, password: pass }),
+          });
+          const data = await res.json();
+
+          if (res.ok && data.access_token) {
+            token = data.access_token;
+            document.getElementById("login-container").style.display = "none";
+            document.getElementById("main-header").style.display = "block";
+            document.getElementById("actions").style.display = "flex";
+            document.querySelector(".form-container").style.display = "block";
+            document.querySelector(".inventory-container").style.display =
+              "block";
+            viewInventory();
+            updateChart();
+          } else {
+            errorEl.textContent = data.error || "Login falhou";
+          }
+        } catch (err) {
+          errorEl.textContent = "Erro de conexão com API";
+        }
     }
 
     let inventoryData = [
