@@ -1,61 +1,118 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard de Estoque</title>
-  
-  <!-- Fonte Roboto -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='static/style.css') }}" />
-</head>
-<body>
-  <div class="container">
-    <!-- Cabeçalho -->
-    <header>
-      <h1>Dashboard de Estoque</h1>
-    </header>
+from flasgger import swag_from
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_restful import Resource
+from flask import jsonify
+from src.models import Usuario, Produto, Categoria  # Importe modelos adicionais
 
-    <!-- Container do gráfico -->
-    <div class="chart-container">
-      <canvas id="estoqueChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Script do Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <script>
-    // Obtendo os dados enviados pelo Flask
-    const labels = JSON.parse('{{ produtos | tojson | safe }}');
-    const data = JSON.parse('{{ quantidades | tojson | safe }}');
-
-    console.log("Produtos:", labels); // Log dos produtos
-    console.log("Quantidades:", data); // Log das quantidades
-
-    // Configuração do gráfico
-    const ctx = document.getElementById('estoqueChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar', // Tipo de gráfico: barra
-      data: {
-        labels: labels, // Rótulos do eixo X
-        datasets: [{
-          label: 'Quantidade em Estoque', // Legenda
-          data: data, // Dados do eixo Y
-          backgroundColor: '#007bff', // Cor de fundo das barras
-          borderWidth: 1 // Largura da borda
-        }]
-      },
-      options: {
-        responsive: true, // Torna o gráfico responsivo
-        maintainAspectRatio: false, // Não mantém proporção fixa
-        scales: {
-          y: {
-            beginAtZero: true // Eixo Y começa do zero
-          }
+class ProfileResource(Resource):
+    @swag_from({
+        'tags': ['Usuário'],
+        'summary': 'Obter dados do perfil autenticado com informações para gráficos',
+        'security': [{
+            'BearerAuth': []
+        }],
+        'responses': {
+            200: {
+                'description': 'Perfil do usuário com dados para visualizações',
+                'content': {
+                    'application/json': {
+                        'example': {
+                            "id": 1,
+                            "username": "detetivezin",
+                            "charts": {
+                                "product_distribution": {
+                                    "title": "Distribuição de Produtos por Categoria",
+                                    "labels": ["Eletrônicos", "Vestuário", "Alimentos"],
+                                    "data": [15, 23, 8],
+                                    "colors": ["#FF6384", "#36A2EB", "#FFCE56"]
+                                },
+                                "stock_status": {
+                                    "title": "Status de Estoque",
+                                    "labels": ["Em Estoque", "Baixo Estoque", "Esgotado"],
+                                    "data": [30, 12, 5],
+                                    "colors": ["#4BC0C0", "#FF9F40", "#C9CBCF"]
+                                },
+                                "price_distribution": {
+                                    "title": "Distribuição por Faixa de Preço",
+                                    "labels": ["Até R$50", "R$51-100", "R$101-200", "Acima de R$200"],
+                                    "data": [25, 15, 8, 3],
+                                    "colors": ["#9966FF", "#FFCD56", "#C45850", "#7CB5EC"]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            401: {'description': 'Token inválido ou expirado'},
+            404: {'description': 'Usuário não encontrado'}
         }
-      }
-    });
-  </script>
-</body>
-</html>
+    })
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        user = Usuario.query.get(user_id)
+        
+        if not user:
+            return {"message": "Usuário não encontrado"}, 404
+        
+        # Dados simulados para gráficos (substituir com consultas reais ao banco)
+        chart_data = {
+            "product_distribution": self.get_product_distribution(user_id),
+            "stock_status": self.get_stock_status(user_id),
+            "price_distribution": self.get_price_distribution(user_id)
+        }
+        
+        return jsonify({
+            "id": user.id,
+            "username": user.username,
+            "charts": chart_data
+        })
+    
+    def get_product_distribution(self, user_id):
+        """Distribuição de produtos por categoria"""
+        # Exemplo de implementação real:
+        # categorias = Categoria.query.join(Produto).filter(Produto.usuario_id == user_id).all()
+        # return {
+        #     "title": "Distribuição de Produtos por Categoria",
+        #     "labels": [cat.nome for cat in categorias],
+        #     "data": [cat.total_produtos for cat in categorias],
+        #     "colors": ["#"+''.join([random.choice('0123456789ABCDEF') for _ in range(6)]) for _ in categorias]
+        # }
+        
+        return {
+            "title": "Distribuição de Produtos por Categoria",
+            "labels": ["Eletrônicos", "Vestuário", "Alimentos", "Livros", "Móveis"],
+            "data": [15, 23, 8, 12, 7],
+            "colors": ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"]
+        }
+    
+    def get_stock_status(self, user_id):
+        """Status do estoque dos produtos"""
+        # Exemplo de implementação real:
+        # em_estoque = Produto.query.filter_by(usuario_id=user_id, estoque__gte=10).count()
+        # baixo_estoque = Produto.query.filter_by(usuario_id=user_id).filter(Produto.estoque < 10, Produto.estoque > 0).count()
+        # esgotado = Produto.query.filter_by(usuario_id=user_id, estoque=0).count()
+        
+        return {
+            "title": "Status de Estoque",
+            "labels": ["Em Estoque", "Baixo Estoque", "Esgotado"],
+            "data": [30, 12, 5],
+            "colors": ["#4BC0C0", "#FF9F40", "#C9CBCF"]
+        }
+    
+    def get_price_distribution(self, user_id):
+        """Distribuição por faixa de preço"""
+        # Exemplo de implementação real:
+        # faixas = [
+        #     Produto.query.filter(Produto.preco <= 50, Produto.usuario_id == user_id).count(),
+        #     Produto.query.filter(Produto.preco > 50, Produto.preco <= 100, Produto.usuario_id == user_id).count(),
+        #     Produto.query.filter(Produto.preco > 100, Produto.preco <= 200, Produto.usuario_id == user_id).count(),
+        #     Produto.query.filter(Produto.preco > 200, Produto.usuario_id == user_id).count()
+        # ]
+        
+        return {
+            "title": "Distribuição por Faixa de Preço",
+            "labels": ["Até R$50", "R$51-100", "R$101-200", "Acima de R$200"],
+            "data": [25, 15, 8, 3],
+            "colors": ["#9966FF", "#FFCD56", "#C45850", "#7CB5EC"]
+        }
