@@ -1,6 +1,9 @@
+// Função para exibir o formulário de adição de itens
 function showAddForm() {
+    // Obtém o container de formulários
     const formContainer = document.getElementById('form-container');
   
+    // Insere o HTML do formulário de adição
     formContainer.innerHTML = `
         <h2>Adicionar Item</h2>
         <form id="addForm">
@@ -14,9 +17,11 @@ function showAddForm() {
         </form>
     `;
   
+    // Adiciona o event listener para o submit do formulário
     document.getElementById('addForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+        e.preventDefault(); // Impede o comportamento padrão de recarregar a página
   
+        // Obtém e valida os valores dos campos
         let codigo = document.getElementById('codigo').value.trim();
         if (!codigo) {
             alert("O código do item é obrigatório!");
@@ -29,24 +34,35 @@ function showAddForm() {
         let data = document.getElementById('data').value.trim();
         let setor = document.getElementById('setor').value.trim();
   
-        const novoItem = { codigo, nome, quantidade, saida, quantidadeAposSaida: quantidade - saida, data, setor };
+        // Cria o objeto do novo item
+        const novoItem = { 
+            codigo, 
+            nome, 
+            quantidade, 
+            saida, 
+            quantidadeAposSaida: quantidade - saida, // Calcula a quantidade após saída
+            data, 
+            setor 
+        };
   
+        // Envia a requisição POST para a API
         fetch('/api/items', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(novoItem),
         })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log('Item adicionado:', data);
-                viewInventory();
-                formContainer.innerHTML = '';
-            })
-            .catch((err) => console.error('Erro ao adicionar item:', err));
+        .then((res) => res.json())
+        .then((data) => {
+            console.log('Item adicionado:', data);
+            viewInventory(); // Atualiza a exibição do inventário
+            formContainer.innerHTML = ''; // Limpa o formulário
+        })
+        .catch((err) => console.error('Erro ao adicionar item:', err));
     });
-  }
+}
   
-  function showUpdateForm() {
+// Função para exibir o formulário de atualização de itens
+function showUpdateForm() {
     const formContainer = document.getElementById('form-container');
   
     formContainer.innerHTML = `
@@ -64,33 +80,43 @@ function showAddForm() {
     document.getElementById('updateForm').addEventListener('submit', function (e) {
         e.preventDefault();
   
+        // Obtém os valores dos campos
         let codigo = document.getElementById('codigo').value.trim();
         let quantidade = parseInt(document.getElementById('quantidade').value);
         let saida = parseInt(document.getElementById('saida').value);
         let data = document.getElementById('data').value.trim();
         let setor = document.getElementById('setor').value.trim();
   
-        const itemAtualizado = { quantidade, saida, quantidadeAposSaida: quantidade - saida, data, setor };
+        // Cria o objeto com dados atualizados
+        const itemAtualizado = { 
+            quantidade, 
+            saida, 
+            quantidadeAposSaida: quantidade - saida, // Recalcula o saldo
+            data, 
+            setor 
+        };
   
+        // Envia requisição PUT para a API
         fetch(`/api/items/${codigo}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(itemAtualizado),
         })
-            .then((res) => {
-                if (!res.ok) throw new Error('Erro ao atualizar item');
-                return res.json();
-            })
-            .then((data) => {
-                console.log('Item atualizado:', data);
-                viewInventory();
-                formContainer.innerHTML = '';
-            })
-            .catch((err) => console.error('Erro ao atualizar item:', err));
+        .then((res) => {
+            if (!res.ok) throw new Error('Erro ao atualizar item');
+            return res.json();
+        })
+        .then((data) => {
+            console.log('Item atualizado:', data);
+            viewInventory(); // Atualiza o inventário
+            formContainer.innerHTML = ''; // Limpa o formulário
+        })
+        .catch((err) => console.error('Erro ao atualizar item:', err));
     });
-  }
+}
   
-  function showRemoveForm() {
+// Função para exibir o formulário de remoção de itens
+function showRemoveForm() {
     const formContainer = document.getElementById('form-container');
   
     formContainer.innerHTML = `
@@ -104,30 +130,35 @@ function showAddForm() {
     document.getElementById('removeForm').addEventListener('submit', function (e) {
         e.preventDefault();
   
+        // Obtém o código do item a ser removido
         let codigo = document.getElementById('codigoRemover').value.trim();
   
+        // Envia requisição DELETE para a API
         fetch(`/api/items/${codigo}`, {
             method: 'DELETE',
         })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    viewInventory();
-                }
-                formContainer.innerHTML = '';
-            })
-            .catch((err) => console.error('Erro ao remover item:', err));
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.error) {
+                alert(data.error); // Exibe erro se houver
+            } else {
+                viewInventory(); // Atualiza inventário em caso de sucesso
+            }
+            formContainer.innerHTML = ''; // Limpa o formulário
+        })
+        .catch((err) => console.error('Erro ao remover item:', err));
     });
-  }
+}
   
-  function viewInventory() {
+// Função para exibir o inventário atual
+function viewInventory() {
     const inventoryContainer = document.getElementById('inventory-container');
   
+    // Busca os itens da API
     fetch('/api/items')
         .then((res) => res.json())
-        .then ((data) => {
+        .then((data) => {
+            // Gera a tabela de inventário
             inventoryContainer.innerHTML = `
                 <h2>Itens no Estoque</h2>
                 <table>
@@ -154,13 +185,14 @@ function showAddForm() {
                         </tr>
                     `
                         )
-                        .join('')}
+                        .join('')} <!-- Converte array em string HTML -->
                 </table>
             `;
         })
         .catch((err) => console.error('Erro ao buscar inventário:', err));
-  }
+}
   
-  document.addEventListener('DOMContentLoaded', function () {
+// Inicializa a exibição do inventário quando o documento é carregado
+document.addEventListener('DOMContentLoaded', function () {
     viewInventory();
-  });
+});
