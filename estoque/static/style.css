@@ -5,7 +5,7 @@
 
 /* Estilos gerais do corpo da página */
 body {
-    background-image: url('https://checkbits.com.br/wp-content/uploads/2023/04/Organizacao-de-estoque-5-dicas-para-nao-errar.png'); /* Imagem de fundo temática */
+    background-image: #2356a8
     background-size: cover; /* Cobrir toda a área visível */
     background-attachment: fixed; /* Fixar imagem durante rolagem */
     display: flex;
