@@ -1,39 +1,81 @@
+</html>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- Definição do conjunto de caracteres para UTF-8 (suporta acentos e caracteres especiais) -->
   <meta charset="UTF-8" />
-  
-  <!-- Configuração de viewport para responsividade em dispositivos móveis -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Controle de Estoque</title>
-  
-  <!-- Importação da fonte Roboto do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-  
-  <!-- Link para arquivo CSS externo -->
   <link rel="stylesheet" href="static/style.css" />
 </head>
 <body>
-  <!-- Container principal que envolve todo o conteúdo -->
   <div class="container">
-    <!-- Cabeçalho da página -->
     <header>
       <h1>Controle de Estoque</h1>
     </header>
-    
-    <!-- Seção de botões de ação -->
+
     <section class="actions">
-      <!-- Botão para acionar formulário de adição de itens -->
       <button onclick="showAddForm()">Adicionar Item</button>
-      
-      <!-- Botão para acionar formulário de atualização de itens -->
       <button onclick="showUpdateForm()">Atualizar Item</button>
-      
-      <!-- Botão para acionar formulário de remoção de itens -->
       <button onclick="showRemoveForm()">Remover Item</button>
-      
+      <a href="/dashboard"><button>Visualizar Dashboard</button></a>
+    </section>
+
+    <div class="form-container" id="form-container"></div>
+
+    <div class="inventory-container" id="inventory-container">
+      <h2>Itens no Estoque</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>Quantidade</th>
+            <th>Saída</th>
+            <th>Após Saída</th>
+            <th>Data</th>
+            <th>Setor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="estoque-body"></tbody>
+      </table>
+      <p class="footer">Lista de itens atualmente em estoque.</p>
+    </div>
+  </div>
+<!-- Inclusão do arquivo JavaScript externo -->
+  <script src="static/script.js">
+    const dados = [
+      { codigo: '2035', nome: 'anel', qtd: 90, saida: 7, data: '01/06/2025', setor: 'TI' },
+      { codigo: '004', nome: 'Cadeira de Escritório Premium', qtd: 10, saida: 1, data: '14/05/2024', setor: 'Mobiliário' },
+      { codigo: '003', nome: 'Monitor LED 24 polegadas', qtd: 15, saida: 2, data: '30/04/2024', setor: 'Hardware' },
+      { codigo: '002', nome: 'Mouse Sem Fio Ergonômico', qtd: 30, saida: 10, data: '11/04/2024', setor: 'TI' },
+      { codigo: 'PROD005', nome: 'teclado', qtd: 60, saida: 30, data: '01/06/2025', setor: 'ti' },
+      { codigo: '001', nome: 'Teclado Gamer RGB', qtd: 20, saida: 5, data: '09/04/2024', setor: 'TI' }
+    ];
+
+    const tbody = document.getElementById('estoque-body');
+    dados.forEach(item => {
+      const tr = document.createElement('tr');
+      const aposSaida = item.qtd - item.saida;
+      tr.innerHTML = `
+        <td><span class="code">${item.codigo}</span></td>
+        <td>${item.nome}</td>
+        <td>${item.qtd}</td>
+        <td class="out">${item.saida}</td>
+        <td class="after">${aposSaida}</td>
+        <td>${item.data}</td>
+        <td>${item.setor}</td>
+        <td>
+          <button class="edit-btn">✏️</button>
+          <button class="delete-btn">🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  </script>
+</body>
+</html>
       <!-- Link/Botão para acessar o dashboard de visualização -->
       <a href="/dashboard"><button>Visualizar Dashboard</button></a>
     </section>
@@ -48,4 +90,5 @@
   <!-- Inclusão do arquivo JavaScript externo -->
   <script src="static/script.js"></script>
 </body>
-</html>
+
+
