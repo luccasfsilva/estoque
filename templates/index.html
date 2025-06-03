@@ -1,24 +1,21 @@
-</html>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Controle de Estoque</title>
+  <title>EstoqueVision</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="static/style.css" />
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Controle de Estoque</h1>
+      <h1><img src="icon.svg" alt="Ícone Estoque" style="width: 24px; vertical-align: middle; margin-right: 8px;">EstoqueVision</h1>
     </header>
 
     <section class="actions">
-      <button onclick="showAddForm()">Adicionar Item</button>
-      <button onclick="showUpdateForm()">Atualizar Item</button>
-      <button onclick="showRemoveForm()">Remover Item</button>
-      <a href="/dashboard"><button>Visualizar Dashboard</button></a>
+      <button class="primary-btn" onclick="showAddForm()">➕ Adicionar Item</button>
+      <button class="secondary-btn" onclick="showUpdateForm()">Visualizar Estoque</button>
     </section>
 
     <div class="form-container" id="form-container"></div>
@@ -43,8 +40,8 @@
       <p class="footer">Lista de itens atualmente em estoque.</p>
     </div>
   </div>
-<!-- Inclusão do arquivo JavaScript externo -->
-  <script src="static/script.js">
+
+  <script>
     const dados = [
       { codigo: '2035', nome: 'anel', qtd: 90, saida: 7, data: '01/06/2025', setor: 'TI' },
       { codigo: '004', nome: 'Cadeira de Escritório Premium', qtd: 10, saida: 1, data: '14/05/2024', setor: 'Mobiliário' },
@@ -76,19 +73,3 @@
   </script>
 </body>
 </html>
-      <!-- Link/Botão para acessar o dashboard de visualização -->
-      <a href="/dashboard"><button>Visualizar Dashboard</button></a>
-    </section>
-    
-    <!-- Container dinâmico para exibição de formulários (inicialmente vazio) -->
-    <div class="form-container" id="form-container"></div>
-    
-    <!-- Container dinâmico para exibição do inventário (inicialmente vazio) -->
-    <div class="inventory-container" id="inventory-container"></div>
-  </div>
-  
-  <!-- Inclusão do arquivo JavaScript externo -->
-  <script src="static/script.js"></script>
-</body>
-
-
