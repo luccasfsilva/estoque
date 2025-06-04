@@ -499,7 +499,7 @@
 
     .form-group input:focus {
       border-color: var(--primary);
-      outline: none;
+      outline: noe;
       box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
     }
 
@@ -811,7 +811,7 @@
         <button onclick="showAddForm()">
           <i class="fas fa-plus-circle"></i> Adicionar Item
         </button>
-                <button onclick="toggleDashboard()">
+        <button onclick="toggleDashboard()">
           <i class="fas fa-chart-bar"></i> Visualizar Estoque
         </button>
       </div>
@@ -840,29 +840,125 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Chave para armazenar os dados no localStorage
-    const INVENTORY_STORAGE_KEY = 'inventoryData';
-    
-    // Dados de estoque (carregados do localStorage)
-    let inventoryData = [];
-    
-    // Função para salvar dados no localStorage
-    function saveInventoryData() {
-      localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventoryData));
-    }
-    
-    // Função para carregar dados do localStorage
-    function loadInventoryData() {
-      const savedData = localStorage.getItem(INVENTORY_STORAGE_KEY);
-      if (savedData) {
-        try {
-          inventoryData = JSON.parse(savedData);
-        } catch (e) {
-          console.error('Erro ao carregar dados do estoque:', e);
-          inventoryData = [];
-        }
+    // Banco de dados SQLite para usuários e estoque
+    class Database {
+      constructor() {
+        this.db = null;
+        this.initDatabase();
+      }
+      
+      initDatabase() {
+        // Usando IndexedDB como banco de dados
+        const request = indexedDB.open('EstoqueDB', 1);
+        
+        request.onerror = (event) => {
+          console.error('Erro ao abrir o banco de dados:', event.target.error);
+        };
+        
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          
+          // Criar tabela de usuários
+          if (!db.objectStoreNames.contains('users')) {
+            const usersStore = db.createObjectStore('users', { keyPath: 'email' });
+            usersStore.createIndex('email', 'email', { unique: true });
+            usersStore.createIndex('password', 'password', { unique: false });
+          }
+          
+          // Criar tabela de estoque
+          if (!db.objectStoreNames.contains('inventory')) {
+            const inventoryStore = db.createObjectStore('inventory', { keyPath: 'codigo' });
+            inventoryStore.createIndex('nome', 'nome', { unique: false });
+            inventoryStore.createIndex('setor', 'setor', { unique: false });
+          }
+        };
+        
+        request.onsuccess = (event) => {
+          this.db = event.target.result;
+          console.log('Banco de dados inicializado com sucesso');
+        };
+      }
+      
+      // Métodos para usuários
+      async registerUser(user) {
+        return new Promise((resolve, reject) => {
+          const transaction = this.db.transaction(['users'], 'readwrite');
+          const store = transaction.objectStore('users');
+          
+          const request = store.add(user);
+          
+          request.onsuccess = () => resolve();
+          request.onerror = (event) => reject(event.target.error);
+        });
+      }
+      
+      async getUser(email) {
+        return new Promise((resolve, reject) => {
+          const transaction = this.db.transaction(['users'], 'readonly');
+          const store = transaction.objectStore('users');
+          
+          const request = store.get(email);
+          
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = (event) => reject(event.target.error);
+        });
+      }
+      
+      // Métodos para estoque
+      async getInventory() {
+        return new Promise((resolve, reject) => {
+          const transaction = this.db.transaction(['inventory'], 'readonly');
+          const store = transaction.objectStore('inventory');
+          
+          const request = store.getAll();
+          
+          request.onsuccess = () => resolve(request.result || []);
+          request.onerror = (event) => reject(event.target.error);
+        });
+      }
+      
+      async addItem(item) {
+        return new Promise((resolve, reject) => {
+          const transaction = this.db.transaction(['inventory'], 'readwrite');
+          const store = transaction.objectStore('inventory');
+          
+          const request = store.add(item);
+          
+          request.onsuccess = () => resolve();
+          request.onerror = (event) => reject(event.target.error);
+        });
+      }
+      
+      async updateItem(item) {
+        return new Promise((resolve, reject) => {
+          const transaction = this.db.transaction(['inventory'], 'readwrite');
+          const store = transaction.objectStore('inventory');
+          
+          const request = store.put(item);
+          
+          request.onsuccess = () => resolve();
+          request.onerror = (event) => reject(event.target.error);
+        });
+      }
+      
+      async deleteItem(codigo) {
+        return new Promise((resolve, reject) => {
+          const transaction = this.db.transaction(['inventory'], 'readwrite');
+          const store = transaction.objectStore('inventory');
+          
+          const request = store.delete(codigo);
+          
+          request.onsuccess = () => resolve();
+          request.onerror = (event) => reject(event.target.error);
+        });
       }
     }
+
+    // Instância do banco de dados
+    const database = new Database();
+    
+    // Dados de estoque
+    let inventoryData = [];
     
     // Função para mostrar toast
     function showToast(message, isError = false) {
@@ -904,78 +1000,89 @@
     }
 
     // Função para exibir estoque
-    function viewInventory() {
+    async function viewInventory() {
       const container = document.getElementById('inventory-container');
       
-      if (inventoryData.length === 0) {
-        container.innerHTML = "<p style='text-align: center; padding: 30px; color: var(--gray);'>Nenhum item no estoque.</p>";
-        return;
-      }
-      
-      // Ordenar por nome antes de exibir
-      sortInventoryByName();
-      
-      container.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nome <i class="fas fa-sort-alpha-down"></i></th>
-              <th>Quantidade</th>
-              <th>Saída</th>
-              <th>Após Saída</th>
-              <th>Data</th>
-              <th>Setor</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${inventoryData.map(item => `
+      try {
+        // Carregar estoque do banco de dados
+        inventoryData = await database.getInventory();
+        
+        if (inventoryData.length === 0) {
+          container.innerHTML = "<p style='text-align: center; padding: 30px; color: var(--gray);'>Nenhum item no estoque.</p>";
+          return;
+        }
+        
+        // Ordenar por nome antes de exibir
+        sortInventoryByName();
+        
+        container.innerHTML = `
+          <table>
+            <thead>
               <tr>
-                <td>${item.codigo}</td>
-                <td>${item.nome}</td>
-                <td>${item.quantidade}</td>
-                <td>${item.saida}</td>
-                <td>${item.quantidadeAposSaida}</td>
-                <td>${formatDate(item.data)}</td>
-                <td class="setor-cell">
-                  <span class="setor-badge ${getSetorClass(item.setor)}">${item.setor}</span>
-                </td>
-                <td class="action-cell">
-                  <button class="action-btn edit" data-codigo="${item.codigo}" data-tooltip="Editar">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="action-btn delete" data-codigo="${item.codigo}" data-tooltip="Remover">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
+                <th>Código</th>
+                <th>Nome <i class="fas fa-sort-alpha-down"></i></th>
+                <th>Quantidade</th>
+                <th>Saída</th>
+                <th>Após Saída</th>
+                <th>Data</th>
+                <th>Setor</th>
+                <th>Ações</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
+            </thead>
+            <tbody>
+              ${inventoryData.map(item => `
+                <tr>
+                  <td>${item.codigo}</td>
+                  <td>${item.nome}</td>
+                  <td>${item.quantidade}</td>
+                  <td>${item.saida}</td>
+                  <td>${item.quantidadeAposSaida}</td>
+                  <td>${formatDate(item.data)}</td>
+                  <td class="setor-cell">
+                    <span class="setor-badge ${getSetorClass(item.setor)}">${item.setor}</span>
+                  </td>
+                  <td class="action-cell">
+                    <button class="action-btn edit" data-codigo="${item.codigo}" data-tooltip="Editar">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" data-codigo="${item.codigo}" data-tooltip="Remover">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
 
-      // Adicionar eventos aos botões de ação
-      document.querySelectorAll('.action-btn.edit').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const codigo = this.getAttribute('data-codigo');
-          const item = inventoryData.find(item => item.codigo === codigo);
-          showUpdateFormWithData(item);
+        // Adicionar eventos aos botões de ação
+        document.querySelectorAll('.action-btn.edit').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const codigo = this.getAttribute('data-codigo');
+            const item = inventoryData.find(item => item.codigo === codigo);
+            showUpdateFormWithData(item);
+          });
         });
-      });
 
-      document.querySelectorAll('.action-btn.delete').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const codigo = this.getAttribute('data-codigo');
-          if (confirm('Tem certeza que deseja remover este item?')) {
-            inventoryData = inventoryData.filter(item => item.codigo !== codigo);
-            saveInventoryData();
-            viewInventory();
-            updateChart();
-            showToast('Item removido com sucesso!');
-          }
+        document.querySelectorAll('.action-btn.delete').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const codigo = this.getAttribute('data-codigo');
+            if (confirm('Tem certeza que deseja remover este item?')) {
+              database.deleteItem(codigo)
+                .then(() => {
+                  viewInventory();
+                  updateChart();
+                  showToast('Item removido com sucesso!');
+                })
+                .catch(error => {
+                  showToast('Erro ao remover item: ' + error.message, true);
+                });
+            }
+          });
         });
-      });
+      } catch (error) {
+        showToast('Erro ao carregar estoque: ' + error.message, true);
+      }
     }
 
     // Função para mostrar formulário de adição
@@ -1033,7 +1140,7 @@
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('data').value = today;
 
-      document.getElementById('addForm').addEventListener('submit', function(e) {
+      document.getElementById('addForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const codigo = document.getElementById('codigo').value;
@@ -1059,12 +1166,15 @@
           quantidadeAposSaida: quantidade - saida
         };
 
-        inventoryData.push(novoItem);
-        saveInventoryData();
-        viewInventory();
-        updateChart();
-        formContainer.innerHTML = '';
-        showToast('Item adicionado com sucesso!');
+        try {
+          await database.addItem(novoItem);
+          viewInventory();
+          updateChart();
+          formContainer.innerHTML = '';
+          showToast('Item adicionado com sucesso!');
+        } catch (error) {
+          showToast('Erro ao adicionar item: ' + error.message, true);
+        }
       });
     }
 
@@ -1119,24 +1229,31 @@
         </form>
       `;
 
-      document.getElementById('updateForm').addEventListener('submit', function(e) {
+      document.getElementById('updateForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const codigo = document.getElementById('codigo').value;
         const index = inventoryData.findIndex(item => item.codigo === codigo);
         
         if (index !== -1) {
-          inventoryData[index].nome = document.getElementById('nome').value;
-          inventoryData[index].quantidade = parseInt(document.getElementById('quantidade').value);
-          inventoryData[index].saida = parseInt(document.getElementById('saida').value);
-          inventoryData[index].quantidadeAposSaida = inventoryData[index].quantidade - inventoryData[index].saida;
-          inventoryData[index].data = document.getElementById('data').value;
-          inventoryData[index].setor = document.getElementById('setor').value;
+          const updatedItem = {
+            codigo: codigo,
+            nome: document.getElementById('nome').value,
+            quantidade: parseInt(document.getElementById('quantidade').value),
+            saida: parseInt(document.getElementById('saida').value),
+            data: document.getElementById('data').value,
+            setor: document.getElementById('setor').value,
+            quantidadeAposSaida: parseInt(document.getElementById('quantidade').value) - parseInt(document.getElementById('saida').value)
+          };
           
-          saveInventoryData();
-          viewInventory();
-          updateChart();
-          formContainer.innerHTML = '';
-          showToast('Item atualizado com sucesso!');
+          try {
+            await database.updateItem(updatedItem);
+            viewInventory();
+            updateChart();
+            formContainer.innerHTML = '';
+            showToast('Item atualizado com sucesso!');
+          } catch (error) {
+            showToast('Erro ao atualizar item: ' + error.message, true);
+          }
         }
       });
     }
@@ -1258,31 +1375,40 @@
       document.getElementById('register-container').style.display = 'block';
     }
 
-    // Função de login (simulada)
-    function login() {
-      const username = document.getElementById('username').value;
+    // Função de login
+    async function login() {
+      const email = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const errorEl = document.getElementById('login-error');
       
-      if (!username || !password) {
+      if (!email || !password) {
         errorEl.textContent = 'Por favor, preencha todos os campos.';
         return;
       }
       
-      // Simulação de login bem-sucedido
-      errorEl.textContent = '';
-      document.getElementById('login-container').style.display = 'none';
-      document.getElementById('system-content').style.display = 'block';
-      document.getElementById('username-display').textContent = username;
-      document.getElementById('user-avatar').textContent = username.charAt(0).toUpperCase();
-      
-      // Exibir estoque e gráfico
-      viewInventory();
-      updateChart();
+      try {
+        const user = await database.getUser(email);
+        
+        if (!user || user.password !== password) {
+          throw new Error('Email ou senha inválidos');
+        }
+        
+        errorEl.textContent = '';
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('system-content').style.display = 'block';
+        document.getElementById('username-display').textContent = user.name;
+        document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+        
+        // Exibir estoque e gráfico
+        viewInventory();
+        updateChart();
+      } catch (error) {
+        errorEl.textContent = error.message;
+      }
     }
 
     // Função para registrar novo usuário
-    function register() {
+    async function register() {
       const name = document.getElementById('reg-name').value;
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-password').value;
@@ -1305,23 +1431,36 @@
         return;
       }
       
-      // Simulação de registro bem-sucedido
-      errorEl.textContent = '';
-      showToast('Conta criada com sucesso! Faça login para continuar.');
-      showLoginForm();
-      
-      // Limpar formulário
-      document.getElementById('reg-name').value = '';
-      document.getElementById('reg-email').value = '';
-      document.getElementById('reg-password').value = '';
-      document.getElementById('reg-confirm-password').value = '';
+      try {
+        // Verificar se usuário já existe
+        const existingUser = await database.getUser(email);
+        if (existingUser) {
+          throw new Error('Email já registrado');
+        }
+        
+        // Registrar novo usuário
+        await database.registerUser({
+          name: name,
+          email: email,
+          password: password
+        });
+        
+        errorEl.textContent = '';
+        showToast('Conta criada com sucesso! Faça login para continuar.');
+        showLoginForm();
+        
+        // Limpar formulário
+        document.getElementById('reg-name').value = '';
+        document.getElementById('reg-email').value = '';
+        document.getElementById('reg-password').value = '';
+        document.getElementById('reg-confirm-password').value = '';
+      } catch (error) {
+        errorEl.textContent = error.message;
+      }
     }
 
     // Configurar eventos
     document.addEventListener('DOMContentLoaded', function() {
-      // Carregar dados do estoque do localStorage
-      loadInventoryData();
-      
       // Menu do usuário
       document.getElementById('user-menu-btn').addEventListener('click', function() {
         document.getElementById('user-dropdown').classList.toggle('active');
@@ -1348,11 +1487,12 @@
       });
       
       // Alterar senha
-      document.getElementById('submit-password').addEventListener('click', function() {
+      document.getElementById('submit-password').addEventListener('click', async function() {
         const currentPass = document.getElementById('current-password').value;
         const newPass = document.getElementById('new-password').value;
         const confirmPass = document.getElementById('confirm-password').value;
         const errorEl = document.getElementById('password-error');
+        const userEmail = document.getElementById('username-display').textContent;
         
         if (newPass !== confirmPass) {
           errorEl.textContent = 'As senhas não coincidem.';
@@ -1364,13 +1504,31 @@
           return;
         }
         
-        // Simulação de alteração de senha bem-sucedida
-        errorEl.textContent = '';
-        showToast('Senha alterada com sucesso!');
-        document.getElementById('change-password-modal').classList.remove('active');
-        document.getElementById('current-password').value = '';
-        document.getElementById('new-password').value = '';
-        document.getElementById('confirm-password').value = '';
+        try {
+          // Obter usuário atual
+          const user = await database.getUser(userEmail);
+          
+          if (!user) {
+            throw new Error('Usuário não encontrado');
+          }
+          
+          if (user.password !== currentPass) {
+            throw new Error('Senha atual incorreta');
+          }
+          
+          // Atualizar senha
+          user.password = newPass;
+          await database.updateUser(user);
+          
+          errorEl.textContent = '';
+          showToast('Senha alterada com sucesso!');
+          document.getElementById('change-password-modal').classList.remove('active');
+          document.getElementById('current-password').value = '';
+          document.getElementById('new-password').value = '';
+          document.getElementById('confirm-password').value = '';
+        } catch (error) {
+          errorEl.textContent = error.message;
+        }
       });
       
       // Pesquisa
