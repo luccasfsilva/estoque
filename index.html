@@ -693,10 +693,42 @@
     .dashboard-container {
       animation: slideIn 0.5s ease-out;
     }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      background: var(--success);
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+    
+    .toast.show {
+      transform: translateX(0);
+    }
+    
+    .toast.error {
+      background: var(--danger);
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Toast para mensagens -->
+    <div id="toast" class="toast">
+      <i class="fas fa-check-circle"></i>
+      <span id="toast-message">Operação realizada com sucesso!</span>
+    </div>
+    
     <!-- Modal para alterar senha -->
     <div id="change-password-modal" class="modal">
       <div class="modal-content">
@@ -779,6 +811,12 @@
         <button onclick="showAddForm()">
           <i class="fas fa-plus-circle"></i> Adicionar Item
         </button>
+        <button onclick="showUpdateForm()">
+          <i class="fas fa-edit"></i> Atualizar Item
+        </button>
+        <button onclick="showRemoveForm()">
+          <i class="fas fa-trash-alt"></i> Remover Item
+        </button>
         <button onclick="toggleDashboard()">
           <i class="fas fa-chart-bar"></i> Visualizar Estoque
         </button>
@@ -808,9 +846,43 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Dados de estoque (ordenados alfabeticamente por padrão)
-    let inventoryData = [
-    ];
+    // Chave para armazenar os dados no localStorage
+    const INVENTORY_STORAGE_KEY = 'inventoryData';
+    
+    // Dados de estoque (carregados do localStorage)
+    let inventoryData = [];
+    
+    // Função para salvar dados no localStorage
+    function saveInventoryData() {
+      localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventoryData));
+    }
+    
+    // Função para carregar dados do localStorage
+    function loadInventoryData() {
+      const savedData = localStorage.getItem(INVENTORY_STORAGE_KEY);
+      if (savedData) {
+        try {
+          inventoryData = JSON.parse(savedData);
+        } catch (e) {
+          console.error('Erro ao carregar dados do estoque:', e);
+          inventoryData = [];
+        }
+      }
+    }
+    
+    // Função para mostrar toast
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toastMessage.textContent = message;
+      toast.classList.toggle('error', isError);
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
 
     // Função para formatar data no padrão dd/mm/yyyy
     function formatDate(dateString) {
@@ -903,8 +975,10 @@
           const codigo = this.getAttribute('data-codigo');
           if (confirm('Tem certeza que deseja remover este item?')) {
             inventoryData = inventoryData.filter(item => item.codigo !== codigo);
+            saveInventoryData();
             viewInventory();
             updateChart();
+            showToast('Item removido com sucesso!');
           }
         });
       });
@@ -967,20 +1041,36 @@
 
       document.getElementById('addForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        const codigo = document.getElementById('codigo').value;
+        const nome = document.getElementById('nome').value;
+        const quantidade = parseInt(document.getElementById('quantidade').value);
+        const saida = parseInt(document.getElementById('saida').value);
+        const data = document.getElementById('data').value;
+        const setor = document.getElementById('setor').value;
+        
+        // Verificar se o código já existe
+        if (inventoryData.some(item => item.codigo === codigo)) {
+          showToast('Erro: Código já existe!', true);
+          return;
+        }
+        
         const novoItem = {
-          codigo: document.getElementById('codigo').value,
-          nome: document.getElementById('nome').value,
-          quantidade: parseInt(document.getElementById('quantidade').value),
-          saida: parseInt(document.getElementById('saida').value),
-          data: document.getElementById('data').value,
-          setor: document.getElementById('setor').value,
+          codigo: codigo,
+          nome: nome,
+          quantidade: quantidade,
+          saida: saida,
+          data: data,
+          setor: setor,
+          quantidadeAposSaida: quantidade - saida
         };
-        novoItem.quantidadeAposSaida = novoItem.quantidade - novoItem.saida;
 
         inventoryData.push(novoItem);
+        saveInventoryData();
         viewInventory();
         updateChart();
         formContainer.innerHTML = '';
+        showToast('Item adicionado com sucesso!');
       });
     }
 
@@ -1048,9 +1138,11 @@
           inventoryData[index].data = document.getElementById('data').value;
           inventoryData[index].setor = document.getElementById('setor').value;
           
+          saveInventoryData();
           viewInventory();
           updateChart();
           formContainer.innerHTML = '';
+          showToast('Item atualizado com sucesso!');
         }
       });
     }
@@ -1221,7 +1313,7 @@
       
       // Simulação de registro bem-sucedido
       errorEl.textContent = '';
-      alert('Conta criada com sucesso! Faça login para continuar.');
+      showToast('Conta criada com sucesso! Faça login para continuar.');
       showLoginForm();
       
       // Limpar formulário
@@ -1233,6 +1325,9 @@
 
     // Configurar eventos
     document.addEventListener('DOMContentLoaded', function() {
+      // Carregar dados do estoque do localStorage
+      loadInventoryData();
+      
       // Menu do usuário
       document.getElementById('user-menu-btn').addEventListener('click', function() {
         document.getElementById('user-dropdown').classList.toggle('active');
@@ -1277,7 +1372,7 @@
         
         // Simulação de alteração de senha bem-sucedida
         errorEl.textContent = '';
-        alert('Senha alterada com sucesso!');
+        showToast('Senha alterada com sucesso!');
         document.getElementById('change-password-modal').classList.remove('active');
         document.getElementById('current-password').value = '';
         document.getElementById('new-password').value = '';
