@@ -331,11 +331,12 @@
     .action-cell {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 8px;
     }
 
     .action-btn {
-      padding: 10px 16px;
+      width: 36px;
+      height: 36px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -343,8 +344,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      font-weight: 500;
+      position: relative;
     }
 
     .action-btn.edit {
@@ -358,12 +358,27 @@
     }
 
     .action-btn i {
-      margin-right: 6px;
+      font-size: 16px;
     }
 
     .action-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .action-btn:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 10;
     }
 
     .action-btn.edit:hover {
@@ -627,14 +642,6 @@
         left: 50%;
         transform: translateX(-50%);
       }
-      
-      .action-btn span {
-        display: none;
-      }
-      
-      .action-btn i {
-        margin-right: 0;
-      }
     }
 
     /* Animações */
@@ -726,12 +733,6 @@
       <div class="actions" id="actions">
         <button onclick="showAddForm()">
           <i class="fas fa-plus-circle"></i> Adicionar Item
-        </button>
-        <button onclick="showUpdateForm()">
-          <i class="fas fa-edit"></i> Atualizar Item
-        </button>
-        <button onclick="showRemoveForm()">
-          <i class="fas fa-trash-alt"></i> Remover Item
         </button>
         <button onclick="toggleDashboard()">
           <i class="fas fa-chart-bar"></i> Visualizar Estoque
@@ -836,11 +837,11 @@
                   <span class="setor-badge ${getSetorClass(item.setor)}">${item.setor}</span>
                 </td>
                 <td class="action-cell">
-                  <button class="action-btn edit" data-codigo="${item.codigo}">
-                    <i class="fas fa-edit"></i> <span>Editar</span>
+                  <button class="action-btn edit" data-codigo="${item.codigo}" data-tooltip="Editar">
+                    <i class="fas fa-edit"></i>
                   </button>
-                  <button class="action-btn delete" data-codigo="${item.codigo}">
-                    <i class="fas fa-trash"></i> <span>Remover</span>
+                  <button class="action-btn delete" data-codigo="${item.codigo}" data-tooltip="Remover">
+                    <i class="fas fa-trash"></i>
                   </button>
                 </td>
               </tr>
