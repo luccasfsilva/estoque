@@ -34,11 +34,14 @@
       min-height: 100vh;
       color: #333;
       padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .container {
       max-width: 1200px;
-      margin: 0 auto;
+      width: 100%;
     }
 
     /* Header modernizado */
@@ -542,32 +545,40 @@
     }
 
     /* Login Container */
-    .login-container {
+    .auth-container {
       background: white;
       padding: 40px;
       width: 100%;
       max-width: 450px;
-      margin: 80px auto;
+      margin: 0 auto;
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
       text-align: center;
+      animation: slideIn 0.5s ease-out;
     }
 
-    .login-container h2 {
+    .auth-container h2 {
       margin-bottom: 30px;
       color: var(--primary);
     }
 
-    .login-container input {
+    .auth-container input {
       width: 100%;
       padding: 16px 24px;
       margin: 15px 0;
       border-radius: 12px;
       border: 2px solid #e0e0e0;
       font-size: 16px;
+      transition: all 0.3s;
     }
 
-    .login-container button {
+    .auth-container input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+    }
+
+    .auth-container button {
       padding: 16px;
       width: 100%;
       background: var(--primary);
@@ -582,30 +593,48 @@
       box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
     }
 
-    .login-container button:hover {
+    .auth-container button:hover {
       background: var(--primary-dark);
       transform: translateY(-3px);
       box-shadow: 0 10px 20px rgba(67, 97, 238, 0.4);
     }
 
-    .login-container .secondary-btn {
+    .auth-container .secondary-btn {
       background: transparent;
       color: var(--gray);
       box-shadow: none;
       margin-top: 10px;
       font-weight: 500;
+      border: 2px solid #e0e0e0;
     }
 
-    .login-container .secondary-btn:hover {
+    .auth-container .secondary-btn:hover {
       background: #f8f9fa;
       transform: none;
       color: var(--dark);
     }
 
-    .login-container p {
+    .auth-container p {
       color: var(--danger);
       margin-top: 15px;
       font-size: 16px;
+    }
+
+    .auth-switch {
+      margin-top: 20px;
+      font-size: 15px;
+      color: var(--gray);
+    }
+
+    .auth-switch a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      margin-left: 5px;
+    }
+
+    .auth-switch a:hover {
+      text-decoration: underline;
     }
 
     /* Responsividade */
@@ -641,6 +670,10 @@
       .dropdown-menu {
         left: 50%;
         transform: translateX(-50%);
+      }
+      
+      .auth-container {
+        padding: 30px 20px;
       }
     }
 
@@ -693,13 +726,25 @@
     </div>
 
     <!-- Login -->
-    <div class="login-container" id="login-container">
+    <div class="auth-container" id="login-container">
       <h2>Bem-vindo ao EstoquePro</h2>
       <input type="text" id="username" placeholder="Usuário" required>
       <input type="password" id="password" placeholder="Senha" required>
       <button onclick="login()">Entrar</button>
-      <button class="secondary-btn" onclick="register()">Criar Conta</button>
+      <p class="auth-switch">Não tem uma conta? <a href="#" onclick="showRegisterForm()">Registre-se</a></p>
       <p id="login-error"></p>
+    </div>
+
+    <!-- Register -->
+    <div class="auth-container" id="register-container" style="display: none;">
+      <h2>Criar Nova Conta</h2>
+      <input type="text" id="reg-name" placeholder="Nome completo" required>
+      <input type="email" id="reg-email" placeholder="Email" required>
+      <input type="password" id="reg-password" placeholder="Senha" required>
+      <input type="password" id="reg-confirm-password" placeholder="Confirmar senha" required>
+      <button onclick="register()">Registrar</button>
+      <p class="auth-switch">Já tem uma conta? <a href="#" onclick="showLoginForm()">Faça login</a></p>
+      <p id="register-error"></p>
     </div>
 
     <!-- Sistema principal (inicialmente oculto) -->
@@ -1121,29 +1166,75 @@
       }
     }
 
+    // Função para mostrar formulário de login
+    function showLoginForm() {
+      document.getElementById('register-container').style.display = 'none';
+      document.getElementById('login-container').style.display = 'block';
+    }
+
+    // Função para mostrar formulário de registro
+    function showRegisterForm() {
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('register-container').style.display = 'block';
+    }
+
     // Função de login (simulada)
     function login() {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('login-error');
       
-      if (username && password) {
-        // Simulação de login bem-sucedido
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('system-content').style.display = 'block';
-        document.getElementById('username-display').textContent = username;
-        document.getElementById('user-avatar').textContent = username.charAt(0).toUpperCase();
-        
-        // Exibir estoque e gráfico
-        viewInventory();
-        updateChart();
-      } else {
-        document.getElementById('login-error').textContent = 'Por favor, preencha todos os campos.';
+      if (!username || !password) {
+        errorEl.textContent = 'Por favor, preencha todos os campos.';
+        return;
       }
+      
+      // Simulação de login bem-sucedido
+      errorEl.textContent = '';
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('system-content').style.display = 'block';
+      document.getElementById('username-display').textContent = username;
+      document.getElementById('user-avatar').textContent = username.charAt(0).toUpperCase();
+      
+      // Exibir estoque e gráfico
+      viewInventory();
+      updateChart();
     }
 
     // Função para registrar novo usuário
     function register() {
-      document.getElementById('login-error').textContent = 'Funcionalidade de registro em desenvolvimento.';
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const confirmPassword = document.getElementById('reg-confirm-password').value;
+      const errorEl = document.getElementById('register-error');
+      
+      // Validação básica
+      if (!name || !email || !password || !confirmPassword) {
+        errorEl.textContent = 'Por favor, preencha todos os campos.';
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        errorEl.textContent = 'As senhas não coincidem.';
+        return;
+      }
+      
+      if (password.length < 6) {
+        errorEl.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+        return;
+      }
+      
+      // Simulação de registro bem-sucedido
+      errorEl.textContent = '';
+      alert('Conta criada com sucesso! Faça login para continuar.');
+      showLoginForm();
+      
+      // Limpar formulário
+      document.getElementById('reg-name').value = '';
+      document.getElementById('reg-email').value = '';
+      document.getElementById('reg-password').value = '';
+      document.getElementById('reg-confirm-password').value = '';
     }
 
     // Configurar eventos
