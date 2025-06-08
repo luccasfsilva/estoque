@@ -30,7 +30,8 @@
  - **CSS3**
  - **JavaScript (Vanilla)**
  - **Python (Flask)**
-   *(![image]([https://github.com/user-attachments/assets/b0f0c623-3d96-4480-82ef-a4d09a1f1ead](https://chat.deepseek.com/a/chat/s/a9422931-f1b0-4cf1-8f2e-24608dd81ded)))*
+   
+>*(![image]([https://github.com/user-attachments/assets/b0f0c623-3d96-4480-82ef-a4d09a1f1ead](https://chat.deepseek.com/a/chat/s/a9422931-f1b0-4cf1-8f2e-24608dd81ded)))*
  
  ---
  
