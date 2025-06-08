@@ -32,7 +32,8 @@
  - **Python (Flask)**
    
  
- > *(![image]([https://github.com/user-attachments/assets/b0f0c623-3d96-4480-82ef-a4d09a1f1ead](https://imgur.com/a/rVfyyRg)))*
+ > *(![image]([![image](https://github.com/user-attachments/assets/296d887a-0fe5-4082-a7dc-627e5187dde5)
+)))*
  
  ---
  
