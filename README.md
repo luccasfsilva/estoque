@@ -35,8 +35,9 @@
  
  ## 📷 Capturas de Tela
  
- > *(Adicione aqui prints da aplicação para facilitar a visualização)*
- 
+ > *(![image](https://github.com/user-attachments/assets/b0f0c623-3d96-4480-82ef-a4d09a1f1ead))*
+ > *(![image](https://github.com/user-attachments/assets/910103db-45c8-4d01-913e-5828d990c170))*
+> > *(![image](https://github.com/user-attachments/assets/a40192de-5a75-417b-a225-7c5a4a4b5819))*
  ---
  
  ## 🚀 Como Usar
