@@ -35,4 +35,4 @@ def listar_produtos():
         'quantidade_apos_saida': p.quantidade_apos_saida,
         'data': p.data,
         'setor': p.setor
-    } for p in produtos]), 200
+    } for p in produtos]), 200 
